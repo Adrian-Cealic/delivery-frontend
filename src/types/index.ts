@@ -51,6 +51,15 @@ export interface Courier {
   vehicleType: string;
   maxWeight: number;
   licensePlate: string | null;
+  maxFlightRangeKm: number | null;
+}
+
+export interface CreateCourierRequest {
+  vehicleType: string;
+  name: string;
+  phone: string;
+  licensePlate?: string;
+  maxFlightRangeKm?: number;
 }
 
 export interface CreateBikeCourierRequest {
@@ -62,6 +71,12 @@ export interface CreateCarCourierRequest {
   name: string;
   phone: string;
   licensePlate: string;
+}
+
+export interface CreateDroneCourierRequest {
+  name: string;
+  phone: string;
+  maxFlightRangeKm: number;
 }
 
 export interface Delivery {
