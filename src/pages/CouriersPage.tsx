@@ -5,11 +5,12 @@ import type { Courier } from '../types';
 export default function CouriersPage() {
   const [couriers, setCouriers] = useState<Courier[]>([]);
   const [error, setError] = useState('');
-  const [courierType, setCourierType] = useState<'bike' | 'car'>('bike');
+  const [courierType, setCourierType] = useState<'Bicycle' | 'Car' | 'Drone'>('Bicycle');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [licensePlate, setLicensePlate] = useState('');
+  const [maxFlightRange, setMaxFlightRange] = useState('');
 
   const load = async () => {
     try {
@@ -25,12 +26,14 @@ export default function CouriersPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      if (courierType === 'bike') {
-        await courierService.createBike({ name, phone });
-      } else {
-        await courierService.createCar({ name, phone, licensePlate });
-      }
-      setName(''); setPhone(''); setLicensePlate('');
+      await courierService.create({
+        vehicleType: courierType,
+        name,
+        phone,
+        licensePlate: courierType === 'Car' ? licensePlate : undefined,
+        maxFlightRangeKm: courierType === 'Drone' ? parseFloat(maxFlightRange) : undefined,
+      });
+      setName(''); setPhone(''); setLicensePlate(''); setMaxFlightRange('');
       setShowForm(false);
       load();
     } catch (e: unknown) {
@@ -51,7 +54,7 @@ export default function CouriersPage() {
     <div>
       <div className="page-header">
         <h1>Couriers</h1>
-        <p>Manage bike and car couriers</p>
+        <p>Manage bike, car, and drone couriers</p>
       </div>
 
       {error && <div className="error-msg">{error}</div>}
@@ -68,9 +71,10 @@ export default function CouriersPage() {
           <form onSubmit={handleSubmit} style={{ marginBottom: 20, padding: 16, background: '#0f172a', borderRadius: 8 }}>
             <div className="form-group">
               <label>Courier Type</label>
-              <select value={courierType} onChange={e => setCourierType(e.target.value as 'bike' | 'car')}>
-                <option value="bike">Bike Courier</option>
-                <option value="car">Car Courier</option>
+              <select value={courierType} onChange={e => setCourierType(e.target.value as 'Bicycle' | 'Car' | 'Drone')}>
+                <option value="Bicycle">Bike Courier</option>
+                <option value="Car">Car Courier</option>
+                <option value="Drone">Drone Courier</option>
               </select>
             </div>
             <div className="form-row">
@@ -83,10 +87,17 @@ export default function CouriersPage() {
                 <input value={phone} onChange={e => setPhone(e.target.value)} required />
               </div>
             </div>
-            {courierType === 'car' && (
+            {courierType === 'Car' && (
               <div className="form-group">
                 <label>License Plate</label>
                 <input value={licensePlate} onChange={e => setLicensePlate(e.target.value)} required />
+              </div>
+            )}
+            {courierType === 'Drone' && (
+              <div className="form-group">
+                <label>Max Flight Range (km)</label>
+                <input type="number" step="0.1" min="0.1" value={maxFlightRange}
+                  onChange={e => setMaxFlightRange(e.target.value)} required />
               </div>
             )}
             <button type="submit" className="btn btn-success">Create Courier</button>
@@ -104,7 +115,7 @@ export default function CouriersPage() {
                 <th>Type</th>
                 <th>Max Weight</th>
                 <th>Available</th>
-                <th>License Plate</th>
+                <th>Details</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -116,7 +127,11 @@ export default function CouriersPage() {
                   <td><span className={`badge badge-${c.vehicleType.toLowerCase()}`}>{c.vehicleType}</span></td>
                   <td>{c.maxWeight} kg</td>
                   <td><span className={`badge ${c.isAvailable ? 'badge-delivered' : 'badge-cancelled'}`}>{c.isAvailable ? 'Yes' : 'No'}</span></td>
-                  <td>{c.licensePlate || '—'}</td>
+                  <td>
+                    {c.licensePlate && `Plate: ${c.licensePlate}`}
+                    {c.maxFlightRangeKm && `Range: ${c.maxFlightRangeKm} km`}
+                    {!c.licensePlate && !c.maxFlightRangeKm && '—'}
+                  </td>
                   <td>
                     <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
                   </td>
