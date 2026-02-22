@@ -9,6 +9,8 @@ export default function OrdersPage() {
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [customerId, setCustomerId] = useState('');
+  const [priority, setPriority] = useState('Normal');
+  const [deliveryNotes, setDeliveryNotes] = useState('');
   const [items, setItems] = useState<OrderItem[]>([{ productName: '', quantity: 1, unitPrice: 0, weight: 0 }]);
 
   const load = async () => {
@@ -37,9 +39,16 @@ export default function OrdersPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await orderService.create({ customerId, items });
+      await orderService.create({
+        customerId,
+        items,
+        priority,
+        deliveryNotes: deliveryNotes || undefined,
+      });
       setShowForm(false);
       setItems([{ productName: '', quantity: 1, unitPrice: 0, weight: 0 }]);
+      setPriority('Normal');
+      setDeliveryNotes('');
       load();
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Failed to create order');
@@ -55,7 +64,24 @@ export default function OrdersPage() {
     }
   };
 
+  const handleClone = async (id: string) => {
+    try {
+      await orderService.clone(id);
+      load();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Failed to clone order');
+    }
+  };
+
   const customerName = (id: string) => customers.find(c => c.id === id)?.name || id.slice(0, 8);
+
+  const priorityColor = (p: string) => {
+    switch (p) {
+      case 'Express': return 'badge-cancelled';
+      case 'Economy': return 'badge-processing';
+      default: return 'badge-confirmed';
+    }
+  };
 
   return (
     <div>
@@ -76,12 +102,27 @@ export default function OrdersPage() {
 
         {showForm && (
           <form onSubmit={handleSubmit} style={{ marginBottom: 20, padding: 16, background: '#0f172a', borderRadius: 8 }}>
+            <div className="form-row">
+              <div className="form-group" style={{ flex: 2 }}>
+                <label>Customer</label>
+                <select value={customerId} onChange={e => setCustomerId(e.target.value)} required>
+                  <option value="">Select customer...</option>
+                  {customers.map(c => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}
+                </select>
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label>Priority</label>
+                <select value={priority} onChange={e => setPriority(e.target.value)}>
+                  <option value="Economy">Economy</option>
+                  <option value="Normal">Normal</option>
+                  <option value="Express">Express</option>
+                </select>
+              </div>
+            </div>
             <div className="form-group">
-              <label>Customer</label>
-              <select value={customerId} onChange={e => setCustomerId(e.target.value)} required>
-                <option value="">Select customer...</option>
-                {customers.map(c => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}
-              </select>
+              <label>Delivery Notes (optional)</label>
+              <input value={deliveryNotes} onChange={e => setDeliveryNotes(e.target.value)}
+                placeholder="e.g. Leave at door, call before delivery..." />
             </div>
             <h4 style={{ margin: '12px 0 8px', fontSize: 14, color: '#94a3b8' }}>Order Items</h4>
             {items.map((item, idx) => (
@@ -122,16 +163,24 @@ export default function OrdersPage() {
               <div key={o.id} className="card" style={{ margin: 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                   <strong style={{ fontSize: 13 }}>Order #{o.id.slice(0, 8)}</strong>
-                  <span className={`badge badge-${o.status.toLowerCase()}`}>{o.status}</span>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <span className={`badge ${priorityColor(o.priority)}`}>{o.priority}</span>
+                    <span className={`badge badge-${o.status.toLowerCase()}`}>{o.status}</span>
+                  </div>
                 </div>
                 <div className="stats">
                   <span>Customer: {customerName(o.customerId)}</span>
                 </div>
-                <div className="stats" style={{ marginBottom: 8 }}>
+                <div className="stats" style={{ marginBottom: 4 }}>
                   <span>Total: ${o.totalPrice.toFixed(2)}</span>
                   <span>Weight: {o.totalWeight} kg</span>
                   <span>Items: {o.items.length}</span>
                 </div>
+                {o.deliveryNotes && (
+                  <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 8, fontStyle: 'italic' }}>
+                    {o.deliveryNotes}
+                  </div>
+                )}
                 {o.items.map((item, i) => (
                   <div key={i} className="item-row">
                     <span>{item.productName} x{item.quantity}</span>
@@ -139,9 +188,11 @@ export default function OrdersPage() {
                   </div>
                 ))}
                 <div className="btn-group" style={{ marginTop: 10 }}>
+                  <button className="btn btn-primary btn-sm" onClick={() => handleClone(o.id)}
+                    title="Duplicate this order (Prototype pattern)">Duplicate</button>
                   {o.status === 'Created' && (
                     <>
-                      <button className="btn btn-primary btn-sm" onClick={() => handleAction(o.id, 'confirm')}>Confirm</button>
+                      <button className="btn btn-success btn-sm" onClick={() => handleAction(o.id, 'confirm')}>Confirm</button>
                       <button className="btn btn-danger btn-sm" onClick={() => handleAction(o.id, 'cancel')}>Cancel</button>
                     </>
                   )}
