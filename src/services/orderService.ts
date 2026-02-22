@@ -6,6 +6,7 @@ export const orderService = {
   getById: (id: string) => api.get<Order>(`/orders/${id}`),
   getByCustomer: (customerId: string) => api.get<Order[]>(`/orders/customer/${customerId}`),
   create: (data: CreateOrderRequest) => api.post<Order>('/orders', data),
+  clone: (id: string) => api.post<Order>(`/orders/${id}/clone`),
   confirm: (id: string) => api.post<Order>(`/orders/${id}/confirm`),
   process: (id: string) => api.post<Order>(`/orders/${id}/process`),
   markReady: (id: string) => api.post<Order>(`/orders/${id}/ready`),
