@@ -31,8 +31,10 @@ export interface Order {
   id: string;
   customerId: string;
   status: string;
+  priority: string;
   totalPrice: number;
   totalWeight: number;
+  deliveryNotes: string | null;
   createdAt: string;
   updatedAt: string | null;
   items: OrderItem[];
@@ -41,6 +43,8 @@ export interface Order {
 export interface CreateOrderRequest {
   customerId: string;
   items: OrderItem[];
+  priority?: string;
+  deliveryNotes?: string;
 }
 
 export interface Courier {
@@ -95,6 +99,13 @@ export interface AssignDeliveryRequest {
   orderId: string;
   courierId: string;
   distanceKm: number;
+}
+
+export interface SystemConfig {
+  systemName: string;
+  maxDeliveryDistanceKm: number;
+  defaultCurrency: string;
+  maxOrderItems: number;
 }
 
 export interface ApiError {
