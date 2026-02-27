@@ -1,5 +1,5 @@
 import { api } from './api';
-import type { Order, CreateOrderRequest } from '../types';
+import type { Order, CreateOrderRequest, PlaceOrderRequestDto, OrderPlacementResponseDto } from '../types';
 
 export const orderService = {
   getAll: () => api.get<Order[]>('/orders'),
@@ -11,4 +11,6 @@ export const orderService = {
   process: (id: string) => api.post<Order>(`/orders/${id}/process`),
   markReady: (id: string) => api.post<Order>(`/orders/${id}/ready`),
   cancel: (id: string) => api.post<Order>(`/orders/${id}/cancel`),
+  place: (data: PlaceOrderRequestDto) =>
+    api.post<OrderPlacementResponseDto>('/orders/place', data),
 };

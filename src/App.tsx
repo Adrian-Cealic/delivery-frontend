@@ -3,12 +3,14 @@ import CustomersPage from './pages/CustomersPage';
 import OrdersPage from './pages/OrdersPage';
 import CouriersPage from './pages/CouriersPage';
 import DeliveriesPage from './pages/DeliveriesPage';
+import PlaceOrderPage from './pages/PlaceOrderPage';
 
-type Page = 'customers' | 'orders' | 'couriers' | 'deliveries';
+type Page = 'customers' | 'orders' | 'couriers' | 'deliveries' | 'place';
 
 const pages: { key: Page; label: string }[] = [
   { key: 'customers', label: 'Customers' },
   { key: 'orders', label: 'Orders' },
+  { key: 'place', label: 'Place Order (Lab4)' },
   { key: 'couriers', label: 'Couriers' },
   { key: 'deliveries', label: 'Deliveries' },
 ];
@@ -20,6 +22,7 @@ export default function App() {
     switch (activePage) {
       case 'customers': return <CustomersPage />;
       case 'orders': return <OrdersPage />;
+      case 'place': return <PlaceOrderPage />;
       case 'couriers': return <CouriersPage />;
       case 'deliveries': return <DeliveriesPage />;
     }

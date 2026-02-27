@@ -111,3 +111,33 @@ export interface SystemConfig {
 export interface ApiError {
   error: string;
 }
+
+export interface CatalogNode {
+  name: string;
+  totalPrice: number;
+  totalWeight: number;
+  children: CatalogNode[];
+}
+
+export interface PlaceOrderItemDto {
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  weight: number;
+}
+
+export interface PlaceOrderRequestDto {
+  customerId: string;
+  items: PlaceOrderItemDto[];
+  paymentGateway: string;
+  deliveryNotes?: string;
+  currency?: string;
+  priority?: string;
+}
+
+export interface OrderPlacementResponseDto {
+  orderId: string | null;
+  deliveryId: string | null;
+  success: boolean;
+  message: string;
+}
