@@ -58,7 +58,7 @@ export default function PlaceOrderPage() {
 
   const updateItem = (idx: number, field: keyof PlaceOrderItemDto, value: string | number) => {
     const updated = [...items];
-    (updated[idx] as Record<string, unknown>)[field] = value;
+    updated[idx] = { ...updated[idx], [field]: value };
     setItems(updated);
   };
 
