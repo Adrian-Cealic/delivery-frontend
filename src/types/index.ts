@@ -141,3 +141,8 @@ export interface OrderPlacementResponseDto {
   success: boolean;
   message: string;
 }
+
+export interface ReportResponse {
+  format: string;
+  content: string;
+}
