@@ -6,11 +6,13 @@ export default function ProtectedOrdersPage() {
   const [role, setRole] = useState<string>('Admin');
   const [orders, setOrders] = useState<Order[]>([]);
   const [error, setError] = useState('');
+  const [actionError, setActionError] = useState('');
   const [accessDenied, setAccessDenied] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   const loadOrders = async () => {
     setError('');
+    setActionError('');
     setAccessDenied(false);
     setLoaded(false);
     try {
@@ -19,11 +21,31 @@ export default function ProtectedOrdersPage() {
       setLoaded(true);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Request failed';
-      if (msg.includes('denied') || msg.includes('required') || msg.includes('Authentication')) {
+      if (msg.toLowerCase().includes('denied') || msg.toLowerCase().includes('required') || msg.toLowerCase().includes('authentication')) {
         setAccessDenied(true);
       }
       setError(msg);
       setOrders([]);
+    }
+  };
+
+  const handleAction = async (
+    id: string,
+    action: 'confirm' | 'cancel' | 'delete'
+  ) => {
+    setActionError('');
+    try {
+      if (action === 'delete') {
+        await protectedOrderService.delete(id, role);
+      } else if (action === 'confirm') {
+        await protectedOrderService.confirm(id, role);
+      } else {
+        await protectedOrderService.cancel(id, role);
+      }
+      await loadOrders();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Action failed';
+      setActionError(msg);
     }
   };
 
@@ -35,6 +57,8 @@ export default function ProtectedOrdersPage() {
     }
   };
 
+  const isAdmin = role === 'Admin';
+
   return (
     <div>
       <div className="page-header">
@@ -43,7 +67,7 @@ export default function ProtectedOrdersPage() {
       </div>
 
       {error && (
-        <div className={accessDenied ? 'error-msg' : 'error-msg'} style={accessDenied ? {
+        <div className="error-msg" style={accessDenied ? {
           background: '#7f1d1d',
           border: '1px solid #dc2626',
           fontSize: 14,
@@ -51,6 +75,17 @@ export default function ProtectedOrdersPage() {
         } : {}}>
           {accessDenied && <strong style={{ display: 'block', marginBottom: 4 }}>Access Denied (403)</strong>}
           {error}
+        </div>
+      )}
+
+      {actionError && (
+        <div className="error-msg" style={{ background: '#7f1d1d', border: '1px solid #dc2626', fontSize: 14, padding: 16 }}>
+          <strong style={{ display: 'block', marginBottom: 4 }}>
+            {actionError.toLowerCase().includes('denied') || actionError.toLowerCase().includes('required')
+              ? 'Proxy blocked write operation (403)'
+              : 'Error'}
+          </strong>
+          {actionError}
         </div>
       )}
 
@@ -62,22 +97,24 @@ export default function ProtectedOrdersPage() {
           <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
             <label>User Role (sent via X-User-Role header)</label>
             <select value={role} onChange={e => setRole(e.target.value)}>
-              <option value="Admin">Admin (full access)</option>
-              <option value="Courier">Courier (read only)</option>
+              <option value="Admin">Admin (full access: read + write)</option>
+              <option value="Courier">Courier (read only — writes blocked by proxy)</option>
               <option value="None">None (no access)</option>
             </select>
           </div>
-          <button
-            className="btn btn-primary"
-            onClick={loadOrders}
-            style={{ marginTop: 16 }}
-          >
+          <button className="btn btn-primary" onClick={loadOrders} style={{ marginTop: 16 }}>
             Fetch Orders
           </button>
         </div>
-        <div style={{ marginTop: 12 }}>
-          <span style={{ fontSize: 13, color: '#94a3b8' }}>Current role: </span>
+        <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, color: '#94a3b8' }}>Current role:</span>
           <span className={`badge ${roleColor(role)}`}>{role}</span>
+          {isAdmin
+            ? <span style={{ fontSize: 12, color: '#4ade80' }}>Can confirm, cancel and delete orders</span>
+            : role === 'Courier'
+              ? <span style={{ fontSize: 12, color: '#60a5fa' }}>Read only — proxy will block writes</span>
+              : <span style={{ fontSize: 12, color: '#f87171' }}>No access</span>
+          }
         </div>
       </div>
 
@@ -100,6 +137,7 @@ export default function ProtectedOrdersPage() {
                   <th>Total</th>
                   <th>Items</th>
                   <th>Created</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -112,6 +150,37 @@ export default function ProtectedOrdersPage() {
                     <td>${o.totalPrice.toFixed(2)}</td>
                     <td>{o.items.length}</td>
                     <td style={{ fontSize: 12 }}>{new Date(o.createdAt).toLocaleString()}</td>
+                    <td>
+                      <div className="btn-group">
+                        {isAdmin && o.status === 'Created' && (
+                          <button
+                            className="btn btn-success btn-sm"
+                            onClick={() => handleAction(o.id, 'confirm')}
+                          >
+                            Confirm
+                          </button>
+                        )}
+                        {isAdmin && (o.status === 'Created' || o.status === 'Confirmed') && (
+                          <button
+                            className="btn btn-warning btn-sm"
+                            onClick={() => handleAction(o.id, 'cancel')}
+                          >
+                            Cancel
+                          </button>
+                        )}
+                        {isAdmin && (
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleAction(o.id, 'delete')}
+                          >
+                            Delete
+                          </button>
+                        )}
+                        {!isAdmin && role === 'Courier' && (
+                          <span style={{ fontSize: 11, color: '#64748b', fontStyle: 'italic' }}>read only</span>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
