@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { protectedOrderService } from '../services/protectedOrderService';
+import PatternBanner from '../components/PatternBanner';
 import type { Order } from '../types';
 
 export default function ProtectedOrdersPage() {
@@ -49,160 +50,150 @@ export default function ProtectedOrdersPage() {
     }
   };
 
-  const roleColor = (r: string) => {
-    switch (r) {
-      case 'Admin': return 'badge-delivered';
-      case 'Courier': return 'badge-confirmed';
-      default: return 'badge-failed';
-    }
+  const isAdmin = role === 'Admin';
+  const isCourier = role === 'Courier';
+
+  const ROLE_BADGE: Record<string, string> = {
+    Admin: 'badge-delivered',
+    Courier: 'badge-confirmed',
+    None: 'badge-failed',
   };
 
-  const isAdmin = role === 'Admin';
+  const PERM_ROWS: [string, boolean, boolean, boolean][] = [
+    ['Read Orders', true, true, false],
+    ['Confirm Order', true, false, false],
+    ['Cancel Order', true, false, false],
+    ['Delete Order', true, false, false],
+  ];
 
   return (
     <div>
       <div className="page-header">
-        <h1>Protected Orders (Lab 5)</h1>
-        <p>Proxy pattern: access control via X-User-Role header. Admin can read/write, Courier can read, None is blocked.</p>
+        <h1>Protected Orders</h1>
+        <p>Lab 5 — Proxy pattern: access control via X-User-Role header</p>
       </div>
 
-      {error && (
-        <div className="error-msg" style={accessDenied ? {
-          background: '#7f1d1d',
-          border: '1px solid #dc2626',
-          fontSize: 14,
-          padding: 16,
-        } : {}}>
-          {accessDenied && <strong style={{ display: 'block', marginBottom: 4 }}>Access Denied (403)</strong>}
-          {error}
-        </div>
-      )}
+      <PatternBanner
+        patterns={[{ name: 'Proxy (Protection)', type: 'behavioral' }]}
+        description="ProtectionOrderRepositoryProxy wraps InMemoryOrderRepository. Every call passes through the proxy, which reads X-User-Role from IAccessContext. Admin: full CRUD. Courier: read-only. None: blocked entirely (403)."
+      />
 
-      {actionError && (
-        <div className="error-msg" style={{ background: '#7f1d1d', border: '1px solid #dc2626', fontSize: 14, padding: 16 }}>
-          <strong style={{ display: 'block', marginBottom: 4 }}>
-            {actionError.toLowerCase().includes('denied') || actionError.toLowerCase().includes('required')
-              ? 'Proxy blocked write operation (403)'
-              : 'Error'}
-          </strong>
-          {actionError}
-        </div>
-      )}
-
+      {/* Role permission matrix */}
       <div className="card">
         <div className="card-header">
-          <h3>Access Control</h3>
+          <h3>Proxy Permission Matrix</h3>
         </div>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
-            <label>User Role (sent via X-User-Role header)</label>
-            <select value={role} onChange={e => setRole(e.target.value)}>
-              <option value="Admin">Admin (full access: read + write)</option>
-              <option value="Courier">Courier (read only — writes blocked by proxy)</option>
-              <option value="None">None (no access)</option>
-            </select>
-          </div>
-          <button className="btn btn-primary" onClick={loadOrders} style={{ marginTop: 16 }}>
-            Fetch Orders
-          </button>
-        </div>
-        <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, color: '#94a3b8' }}>Current role:</span>
-          <span className={`badge ${roleColor(role)}`}>{role}</span>
-          {isAdmin
-            ? <span style={{ fontSize: 12, color: '#4ade80' }}>Can confirm, cancel and delete orders</span>
-            : role === 'Courier'
-              ? <span style={{ fontSize: 12, color: '#60a5fa' }}>Read only — proxy will block writes</span>
-              : <span style={{ fontSize: 12, color: '#f87171' }}>No access</span>
-          }
+        <div className="role-matrix">
+          <div className="role-matrix-cell role-matrix-header">Operation</div>
+          <div className="role-matrix-cell role-matrix-header">Admin</div>
+          <div className="role-matrix-cell role-matrix-header">Courier</div>
+          <div className="role-matrix-cell role-matrix-header">None</div>
+          {PERM_ROWS.map(([op, admin, courier, none]) => (
+            <>
+              <div key={String(op)} className="role-matrix-cell" style={{ textAlign: 'left', fontWeight: 500 }}>{op}</div>
+              <div className="role-matrix-cell"><span className={admin ? 'role-allowed' : 'role-denied'}>{admin ? '✓' : '✕'}</span></div>
+              <div className="role-matrix-cell"><span className={courier ? 'role-readonly' : 'role-denied'}>{courier ? '✓' : '✕'}</span></div>
+              <div className="role-matrix-cell"><span className={none ? 'role-allowed' : 'role-denied'}>{none ? '✓' : '✕'}</span></div>
+            </>
+          ))}
         </div>
       </div>
+
+      {/* Role selector */}
+      <div className="card">
+        <div className="card-header">
+          <h3>Simulate Role</h3>
+          <span className={`badge ${ROLE_BADGE[role] ?? 'badge-created'}`}>{role}</span>
+        </div>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div className="form-group" style={{ marginBottom: 0, minWidth: 260 }}>
+            <label>X-User-Role header value</label>
+            <select value={role} onChange={e => setRole(e.target.value)}>
+              <option value="Admin">Admin — full access</option>
+              <option value="Courier">Courier — read only</option>
+              <option value="None">None — blocked by proxy</option>
+            </select>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={loadOrders}>Fetch Orders</button>
+        </div>
+        {isAdmin && <p style={{ marginTop: 10, fontSize: 12, color: '#4ade80' }}>Proxy allows: read + confirm + cancel + delete</p>}
+        {isCourier && <p style={{ marginTop: 10, fontSize: 12, color: '#60a5fa' }}>Proxy allows read-only — write operations will be blocked (403)</p>}
+        {!isAdmin && !isCourier && <p style={{ marginTop: 10, fontSize: 12, color: '#f87171' }}>Proxy blocks all access — no role header present</p>}
+      </div>
+
+      {(error || actionError) && (
+        <div className="error-msg" style={accessDenied ? { border: '1px solid #dc2626', background: '#7f1d1d' } : {}}>
+          {accessDenied && <strong style={{ display: 'block', marginBottom: 4 }}>Proxy blocked request (403)</strong>}
+          {error || actionError}
+        </div>
+      )}
+
+      {accessDenied && (
+        <div className="card" style={{ borderColor: '#7f1d1d' }}>
+          <div className="access-denied-card">
+            <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+            <h3>Access Denied</h3>
+            <p style={{ marginTop: 6 }}>
+              {role === 'None' ? 'No role header — proxy rejects the request.' : 'Proxy blocked this write operation for role: ' + role}
+            </p>
+            <p style={{ marginTop: 8, fontSize: 12, color: 'var(--text-muted)' }}>Switch to <strong>Admin</strong> for full access.</p>
+          </div>
+        </div>
+      )}
 
       {loaded && !accessDenied && (
         <div className="card">
           <div className="card-header">
             <h3>Orders ({orders.length})</h3>
-            <span className={`badge ${roleColor(role)}`}>Accessed as {role}</span>
+            <span className={`badge ${ROLE_BADGE[role] ?? 'badge-created'}`}>via {role}</span>
           </div>
           {orders.length === 0 ? (
             <div className="empty-state">No orders found.</div>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Status</th>
-                  <th>Priority</th>
-                  <th>Total</th>
-                  <th>Items</th>
-                  <th>Created</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map(o => (
-                  <tr key={o.id}>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{o.id.slice(0, 8)}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{o.customerId.slice(0, 8)}</td>
-                    <td><span className={`badge badge-${o.status.toLowerCase()}`}>{o.status}</span></td>
-                    <td>{o.priority}</td>
-                    <td>${o.totalPrice.toFixed(2)}</td>
-                    <td>{o.items.length}</td>
-                    <td style={{ fontSize: 12 }}>{new Date(o.createdAt).toLocaleString()}</td>
-                    <td>
-                      <div className="btn-group">
-                        {isAdmin && o.status === 'Created' && (
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={() => handleAction(o.id, 'confirm')}
-                          >
-                            Confirm
-                          </button>
-                        )}
-                        {isAdmin && (o.status === 'Created' || o.status === 'Confirmed') && (
-                          <button
-                            className="btn btn-warning btn-sm"
-                            onClick={() => handleAction(o.id, 'cancel')}
-                          >
-                            Cancel
-                          </button>
-                        )}
-                        {isAdmin && (
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleAction(o.id, 'delete')}
-                          >
-                            Delete
-                          </button>
-                        )}
-                        {!isAdmin && role === 'Courier' && (
-                          <span style={{ fontSize: 11, color: '#64748b', fontStyle: 'italic' }}>read only</span>
-                        )}
-                      </div>
-                    </td>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Total</th>
+                    <th>Items</th>
+                    <th>Created</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {orders.map(o => (
+                    <tr key={o.id}>
+                      <td><code style={{ fontSize: 11 }}>#{o.id.slice(0, 8)}</code></td>
+                      <td><span className={`badge badge-${o.status.toLowerCase()}`}>{o.status}</span></td>
+                      <td>{o.priority}</td>
+                      <td>${o.totalPrice.toFixed(2)}</td>
+                      <td>{o.items.length}</td>
+                      <td style={{ fontSize: 11, color: 'var(--text-muted)' }}>{new Date(o.createdAt).toLocaleString()}</td>
+                      <td>
+                        <div className="btn-group">
+                          {isAdmin && o.status === 'Created' && (
+                            <button className="btn btn-success btn-xs" onClick={() => handleAction(o.id, 'confirm')}>Confirm</button>
+                          )}
+                          {isAdmin && ['Created', 'Confirmed'].includes(o.status) && (
+                            <button className="btn btn-warning btn-xs" onClick={() => handleAction(o.id, 'cancel')}>Cancel</button>
+                          )}
+                          {isAdmin && (
+                            <button className="btn btn-danger btn-xs" onClick={() => handleAction(o.id, 'delete')}>Delete</button>
+                          )}
+                          {!isAdmin && isCourier && (
+                            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontStyle: 'italic' }}>read only</span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
-        </div>
-      )}
-
-      {accessDenied && (
-        <div className="card" style={{ borderColor: '#dc2626' }}>
-          <div style={{ textAlign: 'center', padding: 32 }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🔒</div>
-            <h3 style={{ marginBottom: 8, color: '#f87171' }}>Access Denied</h3>
-            <p style={{ color: '#94a3b8', fontSize: 14 }}>
-              The Protection Proxy blocked this request.
-              {role === 'None' && ' Users with no role cannot access any data.'}
-              {role === 'Courier' && ' Couriers have read-only access — write operations are blocked.'}
-            </p>
-            <p style={{ color: '#64748b', fontSize: 13, marginTop: 8 }}>
-              Try switching to <strong>Admin</strong> or <strong>Courier</strong> role above.
-            </p>
-          </div>
         </div>
       )}
     </div>
