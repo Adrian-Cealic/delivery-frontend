@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { customerService } from '../services/customerService';
+import StatChip from '../components/StatChip';
 import type { Customer, CreateCustomerRequest } from '../types';
 
 export default function CustomersPage() {
@@ -47,86 +48,100 @@ export default function CustomersPage() {
     <div>
       <div className="page-header">
         <h1>Customers</h1>
-        <p>Manage customers in the delivery system</p>
+        <p>Manage customers registered in the delivery system</p>
+      </div>
+
+      <div className="stat-chips">
+        <StatChip label="Total" value={customers.length} color="accent" />
       </div>
 
       {error && <div className="error-msg">{error}</div>}
 
       <div className="card">
         <div className="card-header">
-          <h3>All Customers ({customers.length})</h3>
-          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+          <h3>All Customers</h3>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
             {showForm ? 'Cancel' : '+ Add Customer'}
           </button>
         </div>
 
         {showForm && (
-          <form onSubmit={handleSubmit} style={{ marginBottom: 20, padding: 16, background: '#0f172a', borderRadius: 8 }}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Name</label>
-                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+          <div className="form-panel">
+            <h4>New Customer</h4>
+            <form onSubmit={handleSubmit}>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Name</label>
+                  <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Phone</label>
+                  <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Street</label>
+                  <input value={form.address.street} onChange={e => setForm({ ...form, address: { ...form.address, street: e.target.value } })} required />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>City</label>
+                  <input value={form.address.city} onChange={e => setForm({ ...form, address: { ...form.address, city: e.target.value } })} required />
+                </div>
+                <div className="form-group">
+                  <label>Postal Code</label>
+                  <input value={form.address.postalCode} onChange={e => setForm({ ...form, address: { ...form.address, postalCode: e.target.value } })} required />
+                </div>
               </div>
               <div className="form-group">
-                <label>Email</label>
-                <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+                <label>Country</label>
+                <input value={form.address.country} onChange={e => setForm({ ...form, address: { ...form.address, country: e.target.value } })} required />
               </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Phone</label>
-                <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
-              </div>
-              <div className="form-group">
-                <label>Street</label>
-                <input value={form.address.street} onChange={e => setForm({ ...form, address: { ...form.address, street: e.target.value } })} required />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>City</label>
-                <input value={form.address.city} onChange={e => setForm({ ...form, address: { ...form.address, city: e.target.value } })} required />
-              </div>
-              <div className="form-group">
-                <label>Postal Code</label>
-                <input value={form.address.postalCode} onChange={e => setForm({ ...form, address: { ...form.address, postalCode: e.target.value } })} required />
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Country</label>
-              <input value={form.address.country} onChange={e => setForm({ ...form, address: { ...form.address, country: e.target.value } })} required />
-            </div>
-            <button type="submit" className="btn btn-success">Create Customer</button>
-          </form>
+              <button type="submit" className="btn btn-success btn-sm">Create Customer</button>
+            </form>
+          </div>
         )}
 
         {customers.length === 0 ? (
-          <div className="empty-state">No customers yet. Add one to get started.</div>
+          <div className="empty-state">
+            <div className="empty-state-icon">👤</div>
+            No customers yet. Add one to get started.
+          </div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customers.map(c => (
-                <tr key={c.id}>
-                  <td>{c.name}</td>
-                  <td>{c.email}</td>
-                  <td>{c.phone}</td>
-                  <td>{c.address.street}, {c.address.city}</td>
-                  <td>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
-                  </td>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>City</th>
+                  <th>Address</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {customers.map(c => (
+                  <tr key={c.id}>
+                    <td><strong>{c.name}</strong></td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{c.email}</td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{c.phone}</td>
+                    <td>{c.address.city}</td>
+                    <td style={{ color: 'var(--text-muted)', fontSize: 12 }}>{c.address.street}, {c.address.postalCode}</td>
+                    <td>
+                      <button className="btn btn-danger btn-xs" onClick={() => handleDelete(c.id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
