@@ -1,6 +1,14 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { courierService } from '../services/courierService';
+import PatternBanner from '../components/PatternBanner';
+import StatChip from '../components/StatChip';
 import type { Courier } from '../types';
+
+const VEHICLE_ICON: Record<string, string> = {
+  Bicycle: '🚴',
+  Car: '🚗',
+  Drone: '🚁',
+};
 
 export default function CouriersPage() {
   const [couriers, setCouriers] = useState<Courier[]>([]);
@@ -50,6 +58,8 @@ export default function CouriersPage() {
     }
   };
 
+  const available = couriers.filter(c => c.isAvailable).length;
+
   return (
     <div>
       <div className="page-header">
@@ -57,88 +67,115 @@ export default function CouriersPage() {
         <p>Manage bike, car, and drone couriers</p>
       </div>
 
+      <PatternBanner
+        patterns={[{ name: 'Factory Method', type: 'creational' }]}
+        description="CourierFactoryProvider.GetFactory(VehicleType) returns the correct factory. Each subtype (BikeCourier, CarCourier, DroneCourier) has its own creation logic, max weight, and speed calculation."
+      />
+
+      <div className="stat-chips">
+        <StatChip label="Total" value={couriers.length} color="accent" />
+        <StatChip label="Available" value={available} color="success" />
+        <StatChip label="Busy" value={couriers.length - available} color="warning" />
+      </div>
+
       {error && <div className="error-msg">{error}</div>}
 
       <div className="card">
         <div className="card-header">
-          <h3>All Couriers ({couriers.length})</h3>
-          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+          <h3>All Couriers</h3>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
             {showForm ? 'Cancel' : '+ Add Courier'}
           </button>
         </div>
 
         {showForm && (
-          <form onSubmit={handleSubmit} style={{ marginBottom: 20, padding: 16, background: '#0f172a', borderRadius: 8 }}>
-            <div className="form-group">
-              <label>Courier Type</label>
-              <select value={courierType} onChange={e => setCourierType(e.target.value as 'Bicycle' | 'Car' | 'Drone')}>
-                <option value="Bicycle">Bike Courier</option>
-                <option value="Car">Car Courier</option>
-                <option value="Drone">Drone Courier</option>
-              </select>
-            </div>
-            <div className="form-row">
+          <div className="form-panel">
+            <h4>New Courier — Factory will instantiate the correct subtype</h4>
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Name</label>
-                <input value={name} onChange={e => setName(e.target.value)} required />
+                <label>Courier Type</label>
+                <select value={courierType} onChange={e => setCourierType(e.target.value as 'Bicycle' | 'Car' | 'Drone')}>
+                  <option value="Bicycle">🚴 Bike Courier — max 5 kg, 3 min/km</option>
+                  <option value="Car">🚗 Car Courier — variable capacity</option>
+                  <option value="Drone">🚁 Drone Courier — max 2 kg, limited range</option>
+                </select>
               </div>
-              <div className="form-group">
-                <label>Phone</label>
-                <input value={phone} onChange={e => setPhone(e.target.value)} required />
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Name</label>
+                  <input value={name} onChange={e => setName(e.target.value)} required />
+                </div>
+                <div className="form-group">
+                  <label>Phone</label>
+                  <input value={phone} onChange={e => setPhone(e.target.value)} required />
+                </div>
               </div>
-            </div>
-            {courierType === 'Car' && (
-              <div className="form-group">
-                <label>License Plate</label>
-                <input value={licensePlate} onChange={e => setLicensePlate(e.target.value)} required />
-              </div>
-            )}
-            {courierType === 'Drone' && (
-              <div className="form-group">
-                <label>Max Flight Range (km)</label>
-                <input type="number" step="0.1" min="0.1" value={maxFlightRange}
-                  onChange={e => setMaxFlightRange(e.target.value)} required />
-              </div>
-            )}
-            <button type="submit" className="btn btn-success">Create Courier</button>
-          </form>
+              {courierType === 'Car' && (
+                <div className="form-group">
+                  <label>License Plate</label>
+                  <input value={licensePlate} onChange={e => setLicensePlate(e.target.value)} required />
+                </div>
+              )}
+              {courierType === 'Drone' && (
+                <div className="form-group">
+                  <label>Max Flight Range (km)</label>
+                  <input type="number" step="0.1" min="0.1" value={maxFlightRange}
+                    onChange={e => setMaxFlightRange(e.target.value)} required />
+                </div>
+              )}
+              <button type="submit" className="btn btn-success btn-sm">Create Courier</button>
+            </form>
+          </div>
         )}
 
         {couriers.length === 0 ? (
-          <div className="empty-state">No couriers yet. Add one to get started.</div>
+          <div className="empty-state">
+            <div className="empty-state-icon">🚴</div>
+            No couriers yet. Add one to get started.
+          </div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Type</th>
-                <th>Max Weight</th>
-                <th>Available</th>
-                <th>Details</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {couriers.map(c => (
-                <tr key={c.id}>
-                  <td>{c.name}</td>
-                  <td>{c.phone}</td>
-                  <td><span className={`badge badge-${c.vehicleType.toLowerCase()}`}>{c.vehicleType}</span></td>
-                  <td>{c.maxWeight} kg</td>
-                  <td><span className={`badge ${c.isAvailable ? 'badge-delivered' : 'badge-cancelled'}`}>{c.isAvailable ? 'Yes' : 'No'}</span></td>
-                  <td>
-                    {c.licensePlate && `Plate: ${c.licensePlate}`}
-                    {c.maxFlightRangeKm && `Range: ${c.maxFlightRangeKm} km`}
-                    {!c.licensePlate && !c.maxFlightRangeKm && '—'}
-                  </td>
-                  <td>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
-                  </td>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Max Weight</th>
+                  <th>Status</th>
+                  <th>Details</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {couriers.map(c => (
+                  <tr key={c.id}>
+                    <td>
+                      <span className={`badge badge-${c.vehicleType.toLowerCase()}`}>
+                        {VEHICLE_ICON[c.vehicleType]} {c.vehicleType}
+                      </span>
+                    </td>
+                    <td><strong>{c.name}</strong></td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{c.phone}</td>
+                    <td>{c.maxWeight} kg</td>
+                    <td>
+                      <span className={`badge ${c.isAvailable ? 'badge-available' : 'badge-unavailable'}`}>
+                        {c.isAvailable ? 'Available' : 'Busy'}
+                      </span>
+                    </td>
+                    <td style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+                      {c.licensePlate && <span>Plate: <code>{c.licensePlate}</code></span>}
+                      {c.maxFlightRangeKm && <span>Range: {c.maxFlightRangeKm} km</span>}
+                      {!c.licensePlate && !c.maxFlightRangeKm && '—'}
+                    </td>
+                    <td>
+                      <button className="btn btn-danger btn-xs" onClick={() => handleDelete(c.id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
