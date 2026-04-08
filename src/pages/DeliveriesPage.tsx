@@ -1,188 +1,83 @@
-import { useState, useEffect, type FormEvent } from 'react';
-import { deliveryService } from '../services/deliveryService';
-import { orderService } from '../services/orderService';
-import { courierService } from '../services/courierService';
-import PatternBanner from '../components/PatternBanner';
-import StatusStepper from '../components/StatusStepper';
-import StatChip from '../components/StatChip';
-import type { Delivery, Order, Courier } from '../types';
+import { useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import PageHeader from '@/components/PageHeader'
+import PatternBadge from '@/components/PatternBadge'
+import StatusStepper from '@/components/StatusStepper'
+import { deliveryService } from '@/services/deliveryService'
+import { courierService } from '@/services/courierService'
+import type { Delivery, Courier } from '@/types'
 
-const DELIVERY_STEPS = ['Pending', 'Assigned', 'PickedUp', 'InTransit', 'Delivered'];
+const DELIVERY_STEPS = ['Assigned', 'PickedUp', 'Delivered']
+
+function statusVariant(s: string): 'success' | 'warning' | 'secondary' {
+  if (s === 'Delivered') return 'success'
+  if (s === 'PickedUp') return 'warning'
+  return 'secondary'
+}
 
 export default function DeliveriesPage() {
-  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [couriers, setCouriers] = useState<Courier[]>([]);
-  const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [orderId, setOrderId] = useState('');
-  const [courierId, setCourierId] = useState('');
-  const [distanceKm, setDistanceKm] = useState(5);
+  const [deliveries, setDeliveries] = useState<Delivery[]>([])
+  const [couriers, setCouriers] = useState<Courier[]>([])
+  const [error, setError] = useState('')
 
-  const load = async () => {
-    try {
-      const [d, o, c] = await Promise.all([
-        deliveryService.getAll(),
-        orderService.getAll(),
-        courierService.getAll(),
-      ]);
-      setDeliveries(d);
-      setOrders(o);
-      setCouriers(c);
-      setError('');
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to load data');
-    }
-  };
+  useEffect(() => {
+    Promise.all([deliveryService.getAll(), courierService.getAll()])
+      .then(([d, c]) => { setDeliveries(d); setCouriers(c) })
+      .catch(e => setError(e instanceof Error ? e.message : 'Failed to load'))
+  }, [])
 
-  useEffect(() => { load(); }, []);
-
-  const readyOrders = orders.filter(o => o.status === 'ReadyForDelivery');
-  const availableCouriers = couriers.filter(c => c.isAvailable);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      await deliveryService.assign({ orderId, courierId, distanceKm });
-      setShowForm(false);
-      load();
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to assign delivery');
-    }
-  };
-
-  const handleAction = async (id: string, action: 'markPickedUp' | 'markInTransit' | 'markDelivered' | 'markFailed') => {
-    try {
-      await deliveryService[action](id);
-      load();
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Action failed');
-    }
-  };
-
-  const courierName = (id: string) => couriers.find(c => c.id === id)?.name ?? id.slice(0, 8);
-  const inTransit = deliveries.filter(d => ['Assigned', 'PickedUp', 'InTransit'].includes(d.status)).length;
+  const courierMap = Object.fromEntries(couriers.map(c => [c.id, c.name]))
 
   return (
     <div>
-      <div className="page-header">
-        <h1>Deliveries</h1>
-        <p>Assign couriers and track delivery progress</p>
-      </div>
-
-      <PatternBanner
-        patterns={[
-          { name: 'Flyweight', type: 'creational' },
-          { name: 'Decorator', type: 'behavioral' },
-        ]}
-        description="DeliveryZoneFactory (Flyweight) reuses zone instances with the same properties. Notification chain (Decorator) wraps ConsoleNotification → LoggingDecorator → SmsDecorator on each status change."
+      <PageHeader
+        title="Deliveries"
+        description="Active and completed delivery tracking"
+        actions={
+          <div className="flex gap-2">
+            <PatternBadge pattern="Facade" />
+            <PatternBadge pattern="Decorator" />
+          </div>
+        }
       />
+      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
 
-      <div className="stat-chips">
-        <StatChip label="Total" value={deliveries.length} color="accent" />
-        <StatChip label="In Transit" value={inTransit} color="warning" />
-        <StatChip label="Delivered" value={deliveries.filter(d => d.status === 'Delivered').length} color="success" />
-        <StatChip label="Failed" value={deliveries.filter(d => d.status === 'Failed').length} color="danger" />
-      </div>
-
-      {error && <div className="error-msg">{error}</div>}
-
-      <div className="card">
-        <div className="card-header">
-          <h3>All Deliveries</h3>
-          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancel' : '+ Assign Delivery'}
-          </button>
-        </div>
-
-        {showForm && (
-          <div className="form-panel">
-            <h4>Assign Courier to Order</h4>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Order (Ready for Delivery)</label>
-                <select value={orderId} onChange={e => setOrderId(e.target.value)} required>
-                  <option value="">Select order...</option>
-                  {readyOrders.map(o => (
-                    <option key={o.id} value={o.id}>
-                      Order #{o.id.slice(0, 8)} — ${o.totalPrice.toFixed(2)} — {o.totalWeight} kg
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Courier (Available)</label>
-                  <select value={courierId} onChange={e => setCourierId(e.target.value)} required>
-                    <option value="">Select courier...</option>
-                    {availableCouriers.map(c => (
-                      <option key={c.id} value={c.id}>
-                        {c.name} ({c.vehicleType}) — max {c.maxWeight} kg
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Distance (km)</label>
-                  <input type="number" min={0.1} step={0.1} value={distanceKm} onChange={e => setDistanceKm(+e.target.value)} required />
-                </div>
-              </div>
-              <button type="submit" className="btn btn-success btn-sm">Assign Delivery</button>
-            </form>
-          </div>
-        )}
-
-        {deliveries.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">🗺️</div>
-            No deliveries yet. Assign a courier to a ready order.
-          </div>
-        ) : (
-          <div className="grid">
-            {deliveries.map(d => {
-              const isFailed = d.status === 'Failed';
-              return (
-                <div key={d.id} className="card" style={{ margin: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
-                        Delivery <code>#{d.id.slice(0, 8)}</code>
-                      </div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{courierName(d.courierId)}</div>
-                    </div>
-                    <span className={`badge badge-${d.status.toLowerCase()}`}>{d.status}</span>
-                  </div>
-
-                  <StatusStepper steps={DELIVERY_STEPS} current={d.status} failed={isFailed} />
-
-                  <div className="divider" />
-
-                  <div style={{ display: 'flex', gap: 14, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-                    <span>Order: <code>#{d.orderId.slice(0, 8)}</code></span>
-                    <span>{d.distanceKm} km</span>
-                    {d.estimatedDeliveryTime && <span>ETA: {d.estimatedDeliveryTime}</span>}
-                  </div>
-
-                  <div className="btn-group">
-                    {d.status === 'Assigned' && (
-                      <button className="btn btn-primary btn-xs" onClick={() => handleAction(d.id, 'markPickedUp')}>Picked Up</button>
-                    )}
-                    {d.status === 'PickedUp' && (
-                      <button className="btn btn-warning btn-xs" onClick={() => handleAction(d.id, 'markInTransit')}>In Transit</button>
-                    )}
-                    {d.status === 'InTransit' && (
-                      <button className="btn btn-success btn-xs" onClick={() => handleAction(d.id, 'markDelivered')}>Delivered</button>
-                    )}
-                    {!['Delivered', 'Failed'].includes(d.status) && (
-                      <button className="btn btn-danger btn-xs" onClick={() => handleAction(d.id, 'markFailed')}>Mark Failed</button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent border-zinc-800">
+              <TableHead>Delivery ID</TableHead>
+              <TableHead>Order</TableHead>
+              <TableHead>Courier</TableHead>
+              <TableHead>Progress</TableHead>
+              <TableHead>Distance</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {deliveries.map(d => (
+              <TableRow key={d.id} className="border-zinc-800/50">
+                <TableCell className="font-mono text-[11px] text-zinc-500">{d.id.slice(0, 8)}…</TableCell>
+                <TableCell className="font-mono text-[11px] text-zinc-400">{d.orderId.slice(0, 8)}…</TableCell>
+                <TableCell className="text-zinc-300">{courierMap[d.courierId] ?? d.courierId.slice(0, 8)}</TableCell>
+                <TableCell>
+                  <StatusStepper steps={DELIVERY_STEPS} current={d.status} compact />
+                </TableCell>
+                <TableCell className="text-zinc-400">{d.distanceKm} km</TableCell>
+                <TableCell>
+                  <Badge variant={statusVariant(d.status)}>{d.status}</Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+            {deliveries.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-zinc-600 py-8">No deliveries found</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
-  );
+  )
 }
