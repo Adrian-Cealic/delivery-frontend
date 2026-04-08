@@ -1,0 +1,84 @@
+<h2>Cum implementăm redesign-ul?</h2>
+<p class="subtitle">3 abordări tehnice — fiecare cu trade-off-uri diferite</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Tailwind + shadcn/ui complet <span style="background:rgba(99,102,241,0.2);color:#a5b4fc;font-size:11px;padding:2px 8px;border-radius:4px;margin-left:6px;">Recomandat</span></h3>
+      <p>Instalăm Tailwind CSS + shadcn/ui. Ștergem CSS-ul custom, rescriuem toate componentele cu shadcn (Button, Card, Badge, Table, Dialog, Input, Select, Tabs). Lucide-react pentru iconuri. Rezultat: codebase modern, consistent, ușor de extins.</p>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros">
+          <h4>Avantaje</h4>
+          <ul>
+            <li>Design system complet și consistent</li>
+            <li>Dark mode built-in prin CSS variables</li>
+            <li>Componente accesibile (ARIA)</li>
+            <li>Exact stilul Vercel/Linear</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Dezavantaje</h4>
+          <ul>
+            <li>Rescrierea completă a CSS + JSX</li>
+            <li>Dependențe noi (tailwind, radix-ui)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>shadcn design tokens + CSS minim</h3>
+      <p>Copiem design tokens-urile shadcn (CSS variables pentru culori, spacing, radius) în index.css fără a instala Tailwind. Rescriuem componentele cu clase CSS custom dar aliniate la sistemul shadcn. Fără dependențe noi majore.</p>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros">
+          <h4>Avantaje</h4>
+          <ul>
+            <li>Fără Tailwind — bundle mai mic</li>
+            <li>Aspect identic cu shadcn dark</li>
+            <li>Migrare mai rapidă</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Dezavantaje</h4>
+          <ul>
+            <li>Nu poți folosi componente shadcn direct</li>
+            <li>Mai mult CSS manual de scris</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hybrid — shadcn pentru componente cheie</h3>
+      <p>Tailwind + shadcn doar pentru componentele vizibile (Button, Badge, Card, Table, Dialog). CSS custom păstrat pentru layout, sidebar, stepper. Migrare treptată.</p>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros">
+          <h4>Avantaje</h4>
+          <ul>
+            <li>Risc scăzut — modificare incrementală</li>
+            <li>Păstrează ce funcționează deja</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Dezavantaje</h4>
+          <ul>
+            <li>Design inconsistent (mix de stiluri)</li>
+            <li>Două sisteme CSS în paralel</li>
+            <li>Mai greu de întreținut</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px;">Recomandarea mea: <strong>A</strong> — Tailwind + shadcn complet. Rezultat cel mai curat și cel mai aproape de stilul Vercel.</p>

@@ -1,0 +1,216 @@
+<h2>Design Section 1 — Layout & Sidebar</h2>
+<p class="subtitle">Structura globală a aplicației</p>
+
+<div class="mockup" style="max-width:860px;margin:0 auto;">
+  <div class="mockup-header">Layout Global — Dark Pro cu shadcn/ui</div>
+  <div class="mockup-body" style="padding:0;overflow:hidden;height:480px;">
+    <div style="display:flex;height:100%;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#09090b;">
+
+      <!-- Sidebar -->
+      <div style="width:220px;background:#09090b;border-right:1px solid #27272a;display:flex;flex-direction:column;flex-shrink:0;">
+        <!-- Logo -->
+        <div style="padding:16px 16px 12px;border-bottom:1px solid #27272a;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:28px;height:28px;background:#6366f1;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.19M15 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3.19"/><polyline points="11 6 7 12 11 18"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#fafafa;line-height:1.2;">DeliveryOS</div>
+              <div style="font-size:10px;color:#71717a;">v1.0 · pattern explorer</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div style="flex:1;padding:8px 8px;overflow-y:auto;">
+
+          <!-- Active item -->
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:#18181b;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span style="font-size:13px;font-weight:500;color:#fafafa;">Dashboard</span>
+          </a>
+
+          <!-- Section label -->
+          <div style="font-size:10px;font-weight:600;color:#52525b;text-transform:uppercase;letter-spacing:0.08em;padding:10px 10px 4px;">Operations</div>
+
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span style="font-size:13px;color:#a1a1aa;">Customers</span>
+          </a>
+
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span style="font-size:13px;color:#a1a1aa;">Orders</span>
+            <span style="margin-left:auto;background:#27272a;color:#a1a1aa;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:500;">12</span>
+          </a>
+
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            <span style="font-size:13px;color:#a1a1aa;">Couriers</span>
+          </a>
+
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span style="font-size:13px;color:#a1a1aa;">Deliveries</span>
+          </a>
+
+          <!-- Section label Lab 4 -->
+          <div style="font-size:10px;font-weight:600;color:#52525b;text-transform:uppercase;letter-spacing:0.08em;padding:10px 10px 4px;">Lab 4 — Structural</div>
+
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span style="font-size:13px;color:#a1a1aa;">Place Order</span>
+            <span style="margin-left:auto;background:#0c1f26;color:#67e8f9;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;border:1px solid #164e63;">Façade</span>
+          </a>
+
+          <!-- Section label Lab 5 -->
+          <div style="font-size:10px;font-weight:600;color:#52525b;text-transform:uppercase;letter-spacing:0.08em;padding:10px 10px 4px;">Lab 5 — Behavioral</div>
+
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span style="font-size:13px;color:#a1a1aa;">Reports</span>
+            <span style="margin-left:auto;background:#1c110a;color:#fdba74;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;border:1px solid #431407;">Bridge</span>
+          </a>
+
+          <a style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:1px;text-decoration:none;cursor:pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span style="font-size:13px;color:#a1a1aa;">Protected</span>
+            <span style="margin-left:auto;background:#1c110a;color:#fdba74;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;border:1px solid #431407;">Proxy</span>
+          </a>
+        </div>
+
+        <!-- Footer -->
+        <div style="padding:10px 12px;border-top:1px solid #27272a;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:26px;height:26px;background:#27272a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#a1a1aa;font-weight:600;">A</div>
+            <div style="flex:1;">
+              <div style="font-size:12px;font-weight:500;color:#fafafa;">Admin</div>
+              <div style="font-size:10px;color:#71717a;">Full access</div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 0 4.93 19.07"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+
+        <!-- Top bar -->
+        <div style="height:48px;border-bottom:1px solid #27272a;display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#fafafa;">Dashboard</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:5px 10px;display:flex;align-items:center;gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span style="font-size:12px;color:#52525b;">Search...</span>
+              <span style="font-size:10px;color:#3f3f46;background:#27272a;padding:1px 5px;border-radius:3px;">⌘K</span>
+            </div>
+            <div style="width:32px;height:32px;background:#18181b;border:1px solid #27272a;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content area -->
+        <div style="flex:1;overflow-y:auto;padding:20px;background:#09090b;">
+
+          <!-- Page title -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:20px;font-weight:700;color:#fafafa;letter-spacing:-0.4px;">Good morning</div>
+            <div style="font-size:13px;color:#71717a;margin-top:2px;">Here's what's happening with your deliveries today.</div>
+          </div>
+
+          <!-- KPI cards -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+            <div style="background:#09090b;border:1px solid #27272a;border-radius:8px;padding:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <span style="font-size:11px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Active Orders</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#fafafa;">24</div>
+              <div style="font-size:11px;color:#22c55e;margin-top:4px;">+3 from yesterday</div>
+            </div>
+            <div style="background:#09090b;border:1px solid #27272a;border-radius:8px;padding:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <span style="font-size:11px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">In Transit</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#fafafa;">8</div>
+              <div style="font-size:11px;color:#71717a;margin-top:4px;">2 arriving soon</div>
+            </div>
+            <div style="background:#09090b;border:1px solid #27272a;border-radius:8px;padding:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <span style="font-size:11px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Couriers</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#fafafa;">5<span style="font-size:13px;color:#71717a;font-weight:400;">/9</span></div>
+              <div style="font-size:11px;color:#71717a;margin-top:4px;">available</div>
+            </div>
+            <div style="background:#09090b;border:1px solid #27272a;border-radius:8px;padding:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <span style="font-size:11px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Delivered Today</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#fafafa;">17</div>
+              <div style="font-size:11px;color:#22c55e;margin-top:4px;">+12% vs last week</div>
+            </div>
+          </div>
+
+          <!-- Recent activity table preview -->
+          <div style="background:#09090b;border:1px solid #27272a;border-radius:8px;overflow:hidden;">
+            <div style="padding:12px 16px;border-bottom:1px solid #27272a;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:13px;font-weight:600;color:#fafafa;">Recent Orders</span>
+              <span style="font-size:12px;color:#6366f1;cursor:pointer;">View all</span>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <thead>
+                <tr style="border-bottom:1px solid #27272a;">
+                  <th style="padding:8px 16px;text-align:left;color:#71717a;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Order</th>
+                  <th style="padding:8px 16px;text-align:left;color:#71717a;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Customer</th>
+                  <th style="padding:8px 16px;text-align:left;color:#71717a;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Status</th>
+                  <th style="padding:8px 16px;text-align:right;color:#71717a;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #18181b;">
+                  <td style="padding:8px 16px;color:#a1a1aa;font-family:monospace;">#ORD-001</td>
+                  <td style="padding:8px 16px;color:#fafafa;font-weight:500;">Ion Popescu</td>
+                  <td style="padding:8px 16px;"><span style="background:#064e3b;color:#22c55e;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;">Delivered</span></td>
+                  <td style="padding:8px 16px;text-align:right;color:#fafafa;">$45.00</td>
+                </tr>
+                <tr style="border-bottom:1px solid #18181b;">
+                  <td style="padding:8px 16px;color:#a1a1aa;font-family:monospace;">#ORD-002</td>
+                  <td style="padding:8px 16px;color:#fafafa;font-weight:500;">Maria Ion</td>
+                  <td style="padding:8px 16px;"><span style="background:#312e81;color:#a78bfa;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;">Processing</span></td>
+                  <td style="padding:8px 16px;text-align:right;color:#fafafa;">$23.50</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 16px;color:#a1a1aa;font-family:monospace;">#ORD-003</td>
+                  <td style="padding:8px 16px;color:#fafafa;font-weight:500;">Andrei Marin</td>
+                  <td style="padding:8px 16px;"><span style="background:#1e3a5f;color:#60a5fa;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;">Confirmed</span></td>
+                  <td style="padding:8px 16px;text-align:right;color:#fafafa;">$67.20</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="section" style="max-width:860px;margin:16px auto 0;">
+  <h3>Ce include această secțiune</h3>
+  <ul style="color:#a1a1aa;font-size:13px;line-height:2;">
+    <li><strong style="color:#fafafa;">Sidebar 220px</strong> — logo, nav grupat pe secțiuni (Operations / Lab 4 / Lab 5), badge-uri cu pattern labels, footer cu rol utilizator</li>
+    <li><strong style="color:#fafafa;">Top bar 48px</strong> — titlu pagină, search (⌘K), notificări</li>
+    <li><strong style="color:#fafafa;">Dashboard page</strong> — 4 KPI cards, tabel recent orders</li>
+    <li><strong style="color:#fafafa;">Color system</strong> — exact shadcn dark: background #09090b, card #09090b cu border #27272a, text #fafafa / #a1a1aa / #71717a</li>
+    <li><strong style="color:#fafafa;">Iconuri</strong> — lucide-react (SVG, fără emoji)</li>
+  </ul>
+</div>
+
+<p class="subtitle" style="max-width:860px;margin:12px auto 0;">Arată bine? Sau vrei să schimb ceva la sidebar / dashboard înainte să trecem la paginile interioare?</p>

@@ -1,0 +1,297 @@
+<h2>Design Section 2 — Pagini Interioare</h2>
+<p class="subtitle">Orders, Customers, Couriers, Deliveries — toate cu același sistem de design</p>
+
+<div class="split" style="max-width:900px;margin:0 auto;gap:12px;">
+
+  <!-- Orders page -->
+  <div class="mockup">
+    <div class="mockup-header">Orders Page</div>
+    <div class="mockup-body" style="padding:0;height:320px;overflow:hidden;background:#09090b;">
+      <div style="padding:16px;font-family:-apple-system,sans-serif;">
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#fafafa;">Orders</div>
+            <div style="font-size:11px;color:#71717a;margin-top:1px;">Prototype · Builder patterns</div>
+          </div>
+          <button style="background:#6366f1;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;cursor:pointer;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Order
+          </button>
+        </div>
+
+        <!-- Stat chips -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:6px 12px;text-align:center;">
+            <div style="font-size:16px;font-weight:700;color:#6366f1;">24</div>
+            <div style="font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Total</div>
+          </div>
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:6px 12px;text-align:center;">
+            <div style="font-size:16px;font-weight:700;color:#f59e0b;">7</div>
+            <div style="font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Active</div>
+          </div>
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:6px 12px;text-align:center;">
+            <div style="font-size:16px;font-weight:700;color:#22c55e;">15</div>
+            <div style="font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Done</div>
+          </div>
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:6px 12px;text-align:center;">
+            <div style="font-size:16px;font-weight:700;color:#ef4444;">2</div>
+            <div style="font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Cancelled</div>
+          </div>
+        </div>
+
+        <!-- Order cards grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <!-- Card 1 -->
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:8px;padding:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+              <div>
+                <div style="font-size:11px;font-weight:600;color:#fafafa;">ORD-001</div>
+                <div style="font-size:10px;color:#71717a;">Ion Popescu</div>
+              </div>
+              <div style="display:flex;gap:4px;">
+                <span style="background:#4c0519;color:#fda4af;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;">Express</span>
+                <span style="background:#064e3b;color:#22c55e;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;">Ready</span>
+              </div>
+            </div>
+            <!-- Stepper mini -->
+            <div style="display:flex;align-items:center;gap:0;margin-bottom:8px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+              <div style="flex:1;height:2px;background:#22c55e;"></div>
+              <div style="width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+              <div style="flex:1;height:2px;background:#22c55e;"></div>
+              <div style="width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+              <div style="flex:1;height:2px;background:#22c55e;"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;flex-shrink:0;box-shadow:0 0 0 2px rgba(99,102,241,0.3);"></div>
+              <div style="flex:1;height:2px;background:#27272a;"></div>
+              <div style="width:7px;height:7px;border-radius:50%;background:#27272a;flex-shrink:0;"></div>
+            </div>
+            <div style="font-size:10px;color:#71717a;margin-bottom:8px;">$45.00 · 2.3 kg · 3 items</div>
+            <div style="display:flex;gap:4px;">
+              <button style="background:#18181b;border:1px solid #27272a;color:#a1a1aa;font-size:10px;padding:3px 8px;border-radius:5px;cursor:pointer;">Clone</button>
+              <button style="background:#6366f1;color:white;border:none;font-size:10px;padding:3px 8px;border-radius:5px;cursor:pointer;font-weight:600;">Assign Delivery</button>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:8px;padding:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+              <div>
+                <div style="font-size:11px;font-weight:600;color:#fafafa;">ORD-002</div>
+                <div style="font-size:10px;color:#71717a;">Maria Ion</div>
+              </div>
+              <div style="display:flex;gap:4px;">
+                <span style="background:#1e293b;color:#94a3b8;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;">Economy</span>
+                <span style="background:#312e81;color:#a78bfa;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;">Processing</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0;margin-bottom:8px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+              <div style="flex:1;height:2px;background:#22c55e;"></div>
+              <div style="width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+              <div style="flex:1;height:2px;background:#22c55e;"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#a78bfa;flex-shrink:0;box-shadow:0 0 0 2px rgba(167,139,250,0.3);"></div>
+              <div style="flex:1;height:2px;background:#27272a;"></div>
+              <div style="width:7px;height:7px;border-radius:50%;background:#27272a;flex-shrink:0;"></div>
+              <div style="flex:1;height:2px;background:#27272a;"></div>
+              <div style="width:7px;height:7px;border-radius:50%;background:#27272a;flex-shrink:0;"></div>
+            </div>
+            <div style="font-size:10px;color:#71717a;margin-bottom:8px;">$23.50 · 1.1 kg · 2 items</div>
+            <div style="display:flex;gap:4px;">
+              <button style="background:#18181b;border:1px solid #27272a;color:#a1a1aa;font-size:10px;padding:3px 8px;border-radius:5px;cursor:pointer;">Clone</button>
+              <button style="background:#f59e0b;color:black;border:none;font-size:10px;padding:3px 8px;border-radius:5px;cursor:pointer;font-weight:600;">Mark Ready</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Couriers page -->
+  <div class="mockup">
+    <div class="mockup-header">Couriers Page</div>
+    <div class="mockup-body" style="padding:0;height:320px;overflow:hidden;background:#09090b;">
+      <div style="padding:16px;font-family:-apple-system,sans-serif;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#fafafa;">Couriers</div>
+            <div style="font-size:11px;color:#71717a;">Factory Method pattern</div>
+          </div>
+          <button style="background:#6366f1;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">+ Add Courier</button>
+        </div>
+
+        <!-- Stats -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:6px 12px;">
+            <div style="font-size:15px;font-weight:700;color:#6366f1;">9</div>
+            <div style="font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Total</div>
+          </div>
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:6px 12px;">
+            <div style="font-size:15px;font-weight:700;color:#22c55e;">5</div>
+            <div style="font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Available</div>
+          </div>
+          <div style="background:#18181b;border:1px solid #27272a;border-radius:6px;padding:6px 12px;">
+            <div style="font-size:15px;font-weight:700;color:#f59e0b;">4</div>
+            <div style="font-size:9px;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Busy</div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div style="background:#09090b;border:1px solid #27272a;border-radius:8px;overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:1px solid #27272a;">
+                <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Type</th>
+                <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Name</th>
+                <th style="padding:7px 12px;text-align:left;font-size:10px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Status</th>
+                <th style="padding:7px 12px;text-align:right;font-size:10px;font-weight:500;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;">Max kg</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #18181b;">
+                <td style="padding:7px 12px;"><span style="background:#064e3b;color:#34d399;font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;">Bicycle</span></td>
+                <td style="padding:7px 12px;font-size:12px;color:#fafafa;font-weight:500;">Alex Radu</td>
+                <td style="padding:7px 12px;"><span style="background:#052e16;color:#22c55e;font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;">Available</span></td>
+                <td style="padding:7px 12px;text-align:right;font-size:12px;color:#a1a1aa;">5.0</td>
+              </tr>
+              <tr style="border-bottom:1px solid #18181b;">
+                <td style="padding:7px 12px;"><span style="background:#1e3a5f;color:#60a5fa;font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;">Car</span></td>
+                <td style="padding:7px 12px;font-size:12px;color:#fafafa;font-weight:500;">Dan Mihai</td>
+                <td style="padding:7px 12px;"><span style="background:#450a0a;color:#f87171;font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;">Busy</span></td>
+                <td style="padding:7px 12px;text-align:right;font-size:12px;color:#a1a1aa;">25.0</td>
+              </tr>
+              <tr>
+                <td style="padding:7px 12px;"><span style="background:#312e81;color:#a78bfa;font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;">Drone</span></td>
+                <td style="padding:7px 12px;font-size:12px;color:#fafafa;font-weight:500;">Sky-01</td>
+                <td style="padding:7px 12px;"><span style="background:#052e16;color:#22c55e;font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600;">Available</span></td>
+                <td style="padding:7px 12px;text-align:right;font-size:12px;color:#a1a1aa;">2.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="split" style="max-width:900px;margin:12px auto 0;gap:12px;">
+
+  <!-- Place Order -->
+  <div class="mockup">
+    <div class="mockup-header">Place Order — Façade + Adapter + Composite</div>
+    <div class="mockup-body" style="padding:0;height:280px;overflow:hidden;background:#09090b;">
+      <div style="display:flex;height:100%;font-family:-apple-system,sans-serif;">
+        <!-- Catalog tree -->
+        <div style="width:45%;border-right:1px solid #27272a;padding:12px;overflow:hidden;">
+          <div style="font-size:11px;font-weight:600;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Product Catalog</div>
+          <div style="background:#0c1f26;border:1px solid #164e63;border-radius:5px;padding:5px 8px;margin-bottom:4px;font-size:10px;color:#67e8f9;font-weight:600;">Composite pattern</div>
+          <!-- Tree nodes -->
+          <div style="font-size:11px;">
+            <div style="display:flex;align-items:center;gap:5px;padding:3px 0;color:#fafafa;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span>Electronics</span>
+              <span style="margin-left:auto;color:#52525b;">$320</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:3px 0;padding-left:14px;color:#a1a1aa;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              <span>Laptop Pro</span>
+              <span style="margin-left:auto;color:#52525b;">$280</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:3px 0;padding-left:14px;color:#a1a1aa;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              <span>Mouse</span>
+              <span style="margin-left:auto;color:#52525b;">$40</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:3px 0;color:#fafafa;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span>Food</span>
+              <span style="margin-left:auto;color:#52525b;">$45</span>
+            </div>
+          </div>
+        </div>
+        <!-- Form -->
+        <div style="flex:1;padding:12px;">
+          <div style="font-size:11px;font-weight:600;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Order via Façade</div>
+          <div style="background:#0c1f26;border:1px solid #164e63;border-radius:5px;padding:5px 8px;margin-bottom:8px;font-size:10px;color:#67e8f9;font-weight:600;">OrderPlacementFacade.Place()</div>
+          <div style="margin-bottom:6px;">
+            <div style="font-size:10px;color:#71717a;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.04em;">Customer</div>
+            <div style="background:#18181b;border:1px solid #27272a;border-radius:5px;padding:5px 8px;font-size:11px;color:#a1a1aa;">Select customer...</div>
+          </div>
+          <div style="margin-bottom:6px;">
+            <div style="font-size:10px;color:#71717a;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.04em;">Payment <span style="color:#0e7490;font-weight:700;">ADAPTER</span></div>
+            <div style="display:flex;gap:4px;">
+              <div style="background:#6366f1;border-radius:4px;padding:4px 8px;font-size:10px;color:white;font-weight:600;cursor:pointer;">PayPal</div>
+              <div style="background:#18181b;border:1px solid #27272a;border-radius:4px;padding:4px 8px;font-size:10px;color:#71717a;cursor:pointer;">Stripe</div>
+              <div style="background:#18181b;border:1px solid #27272a;border-radius:4px;padding:4px 8px;font-size:10px;color:#71717a;cursor:pointer;">GPay</div>
+            </div>
+          </div>
+          <button style="width:100%;background:#6366f1;color:white;border:none;padding:7px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;margin-top:6px;">Place Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Protected Orders -->
+  <div class="mockup">
+    <div class="mockup-header">Protected Orders — Proxy Pattern</div>
+    <div class="mockup-body" style="padding:12px;height:280px;overflow:hidden;background:#09090b;font-family:-apple-system,sans-serif;">
+      <!-- Permission matrix -->
+      <div style="background:#1c110a;border:1px solid #431407;border-radius:6px;padding:10px;margin-bottom:10px;">
+        <div style="font-size:10px;font-weight:700;color:#fdba74;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Proxy Permission Matrix</div>
+        <table style="width:100%;border-collapse:collapse;font-size:10px;">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:3px 6px;color:#92400e;font-weight:600;">Operation</th>
+              <th style="text-align:center;padding:3px 6px;color:#92400e;font-weight:600;">Admin</th>
+              <th style="text-align:center;padding:3px 6px;color:#92400e;font-weight:600;">Courier</th>
+              <th style="text-align:center;padding:3px 6px;color:#92400e;font-weight:600;">None</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:3px 6px;color:#fcd34d;">Read</td><td style="text-align:center;color:#22c55e;font-weight:700;">✓</td><td style="text-align:center;color:#22c55e;font-weight:700;">✓</td><td style="text-align:center;color:#ef4444;font-weight:700;">✕</td></tr>
+            <tr><td style="padding:3px 6px;color:#fcd34d;">Confirm</td><td style="text-align:center;color:#22c55e;font-weight:700;">✓</td><td style="text-align:center;color:#ef4444;font-weight:700;">✕</td><td style="text-align:center;color:#ef4444;font-weight:700;">✕</td></tr>
+            <tr><td style="padding:3px 6px;color:#fcd34d;">Delete</td><td style="text-align:center;color:#22c55e;font-weight:700;">✓</td><td style="text-align:center;color:#ef4444;font-weight:700;">✕</td><td style="text-align:center;color:#ef4444;font-weight:700;">✕</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Role selector -->
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <div style="flex:1;">
+          <div style="font-size:10px;color:#71717a;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.04em;">X-User-Role header</div>
+          <div style="display:flex;gap:4px;">
+            <div style="background:#6366f1;border-radius:5px;padding:5px 10px;font-size:11px;color:white;font-weight:600;cursor:pointer;">Admin</div>
+            <div style="background:#18181b;border:1px solid #27272a;border-radius:5px;padding:5px 10px;font-size:11px;color:#71717a;cursor:pointer;">Courier</div>
+            <div style="background:#18181b;border:1px solid #27272a;border-radius:5px;padding:5px 10px;font-size:11px;color:#71717a;cursor:pointer;">None</div>
+          </div>
+        </div>
+        <button style="background:#6366f1;color:white;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:600;align-self:flex-end;cursor:pointer;">Fetch</button>
+      </div>
+      <!-- Mini table -->
+      <div style="background:#09090b;border:1px solid #27272a;border-radius:6px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tbody>
+            <tr style="border-bottom:1px solid #18181b;">
+              <td style="padding:6px 10px;font-size:10px;font-family:monospace;color:#71717a;">#ORD-001</td>
+              <td style="padding:6px 10px;"><span style="background:#064e3b;color:#22c55e;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;">Delivered</span></td>
+              <td style="padding:6px 10px;text-align:right;display:flex;gap:3px;justify-content:flex-end;">
+                <span style="background:#18181b;border:1px solid #27272a;color:#71717a;font-size:9px;padding:2px 6px;border-radius:3px;cursor:pointer;">Cancel</span>
+                <span style="background:#450a0a;color:#f87171;font-size:9px;padding:2px 6px;border-radius:3px;cursor:pointer;">Delete</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:6px 10px;font-size:10px;font-family:monospace;color:#71717a;">#ORD-002</td>
+              <td style="padding:6px 10px;"><span style="background:#312e81;color:#a78bfa;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;">Processing</span></td>
+              <td style="padding:6px 10px;text-align:right;display:flex;gap:3px;justify-content:flex-end;">
+                <span style="background:#052e16;color:#22c55e;font-size:9px;padding:2px 6px;border-radius:3px;cursor:pointer;">Confirm</span>
+                <span style="background:#450a0a;color:#f87171;font-size:9px;padding:2px 6px;border-radius:3px;cursor:pointer;">Delete</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="max-width:900px;margin:16px auto 0;">Aceste 4 pagini arată bine? Confirmă și trecem la Reports + structura fișierelor.</p>
