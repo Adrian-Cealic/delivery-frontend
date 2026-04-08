@@ -1,149 +1,81 @@
-import { useState, useEffect, type FormEvent } from 'react';
-import { customerService } from '../services/customerService';
-import StatChip from '../components/StatChip';
-import type { Customer, CreateCustomerRequest } from '../types';
+import { useEffect, useState } from 'react'
+import { Search } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import PageHeader from '@/components/PageHeader'
+import { customerService } from '@/services/customerService'
+import { orderService } from '@/services/orderService'
+import type { Customer, Order } from '@/types'
 
 export default function CustomersPage() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState<CreateCustomerRequest>({
-    name: '', email: '', phone: '',
-    address: { street: '', city: '', postalCode: '', country: '' },
-  });
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
+  const [search, setSearch] = useState('')
+  const [error, setError] = useState('')
 
-  const load = async () => {
-    try {
-      setCustomers(await customerService.getAll());
-      setError('');
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to load customers');
-    }
-  };
+  useEffect(() => {
+    Promise.all([customerService.getAll(), orderService.getAll()])
+      .then(([c, o]) => { setCustomers(c); setOrders(o) })
+      .catch(e => setError(e instanceof Error ? e.message : 'Failed to load'))
+  }, [])
 
-  useEffect(() => { load(); }, []);
+  const orderCount = (id: string) => orders.filter(o => o.customerId === id).length
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      await customerService.create(form);
-      setForm({ name: '', email: '', phone: '', address: { street: '', city: '', postalCode: '', country: '' } });
-      setShowForm(false);
-      load();
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to create customer');
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      await customerService.delete(id);
-      load();
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to delete customer');
-    }
-  };
+  const filtered = customers.filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.email.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div>
-      <div className="page-header">
-        <h1>Customers</h1>
-        <p>Manage customers registered in the delivery system</p>
-      </div>
+      <PageHeader title="Customers" description="All registered customers" />
+      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
 
-      <div className="stat-chips">
-        <StatChip label="Total" value={customers.length} color="accent" />
-      </div>
-
-      {error && <div className="error-msg">{error}</div>}
-
-      <div className="card">
-        <div className="card-header">
-          <h3>All Customers</h3>
-          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancel' : '+ Add Customer'}
-          </button>
+      <div className="mb-4 flex items-center gap-2">
+        <div className="relative w-64">
+          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-zinc-500" />
+          <Input
+            placeholder="Search customers…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-8 bg-zinc-900 border-zinc-800 text-zinc-300 placeholder:text-zinc-600 h-9"
+          />
         </div>
+      </div>
 
-        {showForm && (
-          <div className="form-panel">
-            <h4>New Customer</h4>
-            <form onSubmit={handleSubmit}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Name</label>
-                  <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-                </div>
-                <div className="form-group">
-                  <label>Email</label>
-                  <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Phone</label>
-                  <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
-                </div>
-                <div className="form-group">
-                  <label>Street</label>
-                  <input value={form.address.street} onChange={e => setForm({ ...form, address: { ...form.address, street: e.target.value } })} required />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>City</label>
-                  <input value={form.address.city} onChange={e => setForm({ ...form, address: { ...form.address, city: e.target.value } })} required />
-                </div>
-                <div className="form-group">
-                  <label>Postal Code</label>
-                  <input value={form.address.postalCode} onChange={e => setForm({ ...form, address: { ...form.address, postalCode: e.target.value } })} required />
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Country</label>
-                <input value={form.address.country} onChange={e => setForm({ ...form, address: { ...form.address, country: e.target.value } })} required />
-              </div>
-              <button type="submit" className="btn btn-success btn-sm">Create Customer</button>
-            </form>
-          </div>
-        )}
-
-        {customers.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state-icon">👤</div>
-            No customers yet. Add one to get started.
-          </div>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>City</th>
-                  <th>Address</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {customers.map(c => (
-                  <tr key={c.id}>
-                    <td><strong>{c.name}</strong></td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{c.email}</td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{c.phone}</td>
-                    <td>{c.address.city}</td>
-                    <td style={{ color: 'var(--text-muted)', fontSize: 12 }}>{c.address.street}, {c.address.postalCode}</td>
-                    <td>
-                      <button className="btn btn-danger btn-xs" onClick={() => handleDelete(c.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent border-zinc-800">
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>City</TableHead>
+              <TableHead>Orders</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.map(c => (
+              <TableRow key={c.id} className="border-zinc-800/50">
+                <TableCell className="font-medium text-zinc-200">{c.name}</TableCell>
+                <TableCell className="text-zinc-400">{c.email}</TableCell>
+                <TableCell className="text-zinc-400">{c.phone}</TableCell>
+                <TableCell className="text-zinc-500">{c.address.city}</TableCell>
+                <TableCell>
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-xs font-semibold text-zinc-300">
+                    {orderCount(c.id)}
+                  </span>
+                </TableCell>
+              </TableRow>
+            ))}
+            {filtered.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-zinc-600 py-8">No customers found</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
-  );
+  )
 }
