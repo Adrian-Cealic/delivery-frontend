@@ -1,191 +1,257 @@
-import { useState, useEffect, type FormEvent } from 'react';
-import { catalogService } from '../services/catalogService';
-import { orderService } from '../services/orderService';
-import { customerService } from '../services/customerService';
-import PatternBanner from '../components/PatternBanner';
-import type { CatalogNode, Customer, PlaceOrderItemDto } from '../types';
+import { useEffect, useState } from 'react'
+import { ChevronRight, ChevronDown, Plus, Minus, CreditCard, Banknote, Wallet } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import PageHeader from '@/components/PageHeader'
+import PatternBadge from '@/components/PatternBadge'
+import { catalogService } from '@/services/catalogService'
+import { customerService } from '@/services/customerService'
+import { orderService } from '@/services/orderService'
+import type { CatalogNode, Customer, PlaceOrderItemDto } from '@/types'
+import { cn } from '@/lib/utils'
 
-function CatalogTree({ node, depth = 0 }: { node: CatalogNode; depth?: number }) {
-  const hasChildren = node.children && node.children.length > 0;
-  return (
-    <div className="catalog-node" style={{ marginLeft: depth * 14 }}>
-      <div className="catalog-node-row">
-        <span style={{ fontSize: 13, color: hasChildren ? '#f59e0b' : '#64748b' }}>
-          {hasChildren ? '▸' : '·'}
-        </span>
-        <span className="catalog-node-name">{node.name}</span>
-        <span className="catalog-node-price">${node.totalPrice.toFixed(2)}</span>
-        <span className="catalog-node-weight">{node.totalWeight.toFixed(2)} kg</span>
-      </div>
-      {hasChildren && node.children.map((child, i) => (
-        <CatalogTree key={i} node={child} depth={depth + 1} />
-      ))}
-    </div>
-  );
+interface CartItem extends PlaceOrderItemDto {
+  key: string
 }
 
-export default function PlaceOrderPage() {
-  const [catalog, setCatalog] = useState<CatalogNode | null>(null);
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [customerId, setCustomerId] = useState('');
-  const [paymentGateway, setPaymentGateway] = useState('PayPal');
-  const [deliveryNotes, setDeliveryNotes] = useState('');
-  const [items, setItems] = useState<PlaceOrderItemDto[]>([
-    { productName: '', quantity: 1, unitPrice: 0, weight: 0 },
-  ]);
+function CatalogTree({ node, onAdd, depth = 0 }: { node: CatalogNode; onAdd: (name: string, price: number) => void; depth?: number }) {
+  const [open, setOpen] = useState(depth === 0)
+  const isLeaf = node.children.length === 0
 
-  const load = async () => {
-    try {
-      const [cat, cust] = await Promise.all([
-        catalogService.getCatalog(),
-        customerService.getAll(),
-      ]);
-      setCatalog(cat);
-      setCustomers(cust);
-      setError('');
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to load');
-    }
-  };
-
-  useEffect(() => { load(); }, []);
-
-  const addItem = () => setItems([...items, { productName: '', quantity: 1, unitPrice: 0, weight: 0 }]);
-
-  const removeItem = (idx: number) => setItems(items.filter((_, i) => i !== idx));
-
-  const updateItem = (idx: number, field: keyof PlaceOrderItemDto, value: string | number) => {
-    const updated = [...items];
-    updated[idx] = { ...updated[idx], [field]: value };
-    setItems(updated);
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    const validItems = items.filter(i => i.productName.trim() && i.quantity > 0 && i.unitPrice >= 0);
-    if (validItems.length === 0) {
-      setError('Add at least one valid item');
-      return;
-    }
-    try {
-      const result = await orderService.place({
-        customerId,
-        items: validItems,
-        paymentGateway,
-        deliveryNotes: deliveryNotes || undefined,
-      });
-      if (result.success) {
-        setSuccess(`Order placed! ID: ${result.orderId}`);
-        setItems([{ productName: '', quantity: 1, unitPrice: 0, weight: 0 }]);
-        setDeliveryNotes('');
-      } else {
-        setError(result.message);
-      }
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Place order failed');
-    }
-  };
-
-  const GATEWAY_LABELS: Record<string, string> = {
-    PayPal: '💳 PayPal',
-    Stripe: '⚡ Stripe',
-    GooglePay: '🔵 Google Pay',
-  };
+  if (isLeaf) {
+    return (
+      <div className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-zinc-800/50 group">
+        <span className="text-sm text-zinc-400 group-hover:text-zinc-200">{node.name}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-zinc-600">RON {node.totalPrice.toFixed(2)}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-zinc-600 hover:text-indigo-400"
+            onClick={() => onAdd(node.name, node.totalPrice)}
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
-      <div className="page-header">
-        <h1>Place Order</h1>
-        <p>Lab 4 — Structural patterns in action</p>
-      </div>
+      <button
+        className="flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-left hover:bg-zinc-800/50"
+        style={{ paddingLeft: `${8 + depth * 12}px` }}
+        onClick={() => setOpen(o => !o)}
+      >
+        {open ? <ChevronDown className="h-3 w-3 text-zinc-600" /> : <ChevronRight className="h-3 w-3 text-zinc-600" />}
+        <span className="text-sm font-medium text-zinc-300">{node.name}</span>
+      </button>
+      {open && (
+        <div style={{ paddingLeft: `${depth * 12}px` }}>
+          {node.children.map(child => (
+            <CatalogTree key={child.name} node={child} onAdd={onAdd} depth={depth + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
-      <PatternBanner
-        patterns={[
-          { name: 'Façade', type: 'structural' },
-          { name: 'Adapter', type: 'structural' },
-          { name: 'Composite', type: 'structural' },
-        ]}
-        description="Façade: OrderPlacementFacade hides order creation + payment + delivery in one call. Adapter: PayPal/Stripe/GooglePay each have different APIs, adapted to IPaymentGateway. Composite: catalog items form a tree — leaf nodes and groups share the same interface."
+type PaymentGateway = 'Cash' | 'Card' | 'DigitalWallet'
+
+export default function PlaceOrderPage() {
+  const [catalog, setCatalog] = useState<CatalogNode | null>(null)
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [customerId, setCustomerId] = useState('')
+  const [cart, setCart] = useState<CartItem[]>([])
+  const [payment, setPayment] = useState<PaymentGateway>('Cash')
+  const [cardNumber, setCardNumber] = useState('')
+  const [walletId, setWalletId] = useState('')
+  const [notes, setNotes] = useState('')
+  const [result, setResult] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    Promise.all([catalogService.getCatalog(), customerService.getAll()])
+      .then(([c, custs]) => { setCatalog(c); setCustomers(custs) })
+      .catch(e => setError(e instanceof Error ? e.message : 'Failed to load'))
+  }, [])
+
+  const addToCart = (name: string, price: number) => {
+    setCart(prev => {
+      const existing = prev.find(i => i.productName === name)
+      if (existing) return prev.map(i => i.productName === name ? { ...i, quantity: i.quantity + 1 } : i)
+      return [...prev, { key: name, productName: name, quantity: 1, unitPrice: price, weight: 0.5 }]
+    })
+  }
+
+  const removeFromCart = (name: string) => {
+    setCart(prev => {
+      const item = prev.find(i => i.productName === name)
+      if (!item) return prev
+      if (item.quantity > 1) return prev.map(i => i.productName === name ? { ...i, quantity: i.quantity - 1 } : i)
+      return prev.filter(i => i.productName !== name)
+    })
+  }
+
+  const total = cart.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
+
+  const handleSubmit = async () => {
+    try {
+      const res = await orderService.place({
+        customerId,
+        items: cart,
+        paymentGateway: payment,
+        deliveryNotes: notes || undefined,
+      })
+      setResult(res.success ? `Order placed: ${res.orderId?.slice(0, 8)}` : res.message)
+      if (res.success) { setCart([]); setCustomerId(''); setNotes('') }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to place order')
+    }
+  }
+
+  return (
+    <div>
+      <PageHeader
+        title="Place Order"
+        description="Composite catalog + Facade order service + Adapter payment"
+        actions={
+          <div className="flex gap-2">
+            <PatternBadge pattern="Composite" />
+            <PatternBadge pattern="Facade" />
+            <PatternBadge pattern="Adapter" />
+          </div>
+        }
       />
+      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+      {result && <p className="mb-4 text-sm text-emerald-400">{result}</p>}
 
-      {error && <div className="error-msg">{error}</div>}
-      {success && <div className="success-msg">✓ {success}</div>}
+      <div className="grid grid-cols-5 gap-6">
+        <Card className="col-span-2 bg-zinc-900 border-zinc-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-zinc-300">Product Catalog</CardTitle>
+            <p className="text-[10px] text-zinc-600 uppercase tracking-wide">Composite pattern</p>
+          </CardHeader>
+          <CardContent className="px-2 pb-4">
+            {catalog ? (
+              <CatalogTree node={catalog} onAdd={addToCart} />
+            ) : (
+              <p className="text-center text-zinc-600 text-sm py-4">Loading…</p>
+            )}
+          </CardContent>
+        </Card>
 
-      <div className="grid-2">
-        <div className="card">
-          <div className="card-header">
-            <h3>Product Catalog</h3>
-            <span className="badge" style={{ background: '#0c1f26', color: '#67e8f9', border: '1px solid #0e7490', fontSize: 10 }}>Composite</span>
-          </div>
-          {catalog ? (
-            <div className="catalog-tree" style={{ maxHeight: 380, overflowY: 'auto' }}>
-              <CatalogTree node={catalog} />
+        <Card className="col-span-3 bg-zinc-900 border-zinc-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-zinc-300">Order Form</CardTitle>
+            <p className="text-[10px] text-zinc-600 uppercase tracking-wide">Facade + Adapter</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-500">Customer</label>
+              <Select value={customerId} onValueChange={setCustomerId}>
+                <SelectTrigger className="bg-zinc-950 border-zinc-700 text-zinc-300">
+                  <SelectValue placeholder="Select customer…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {customers.map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          ) : (
-            <div className="empty-state">Loading catalog...</div>
-          )}
-        </div>
 
-        <div className="card">
-          <div className="card-header">
-            <h3>Place Order via Façade</h3>
-            <span className="badge" style={{ background: '#0c1f26', color: '#67e8f9', border: '1px solid #0e7490', fontSize: 10 }}>Façade</span>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Customer</label>
-              <select value={customerId} onChange={e => setCustomerId(e.target.value)} required>
-                <option value="">Select customer...</option>
-                {customers.map(c => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Payment Gateway <span style={{ color: '#0e7490', fontSize: 10, fontWeight: 700 }}>ADAPTER</span></label>
-              <select value={paymentGateway} onChange={e => setPaymentGateway(e.target.value)}>
-                {Object.entries(GATEWAY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Delivery Notes</label>
-              <input value={deliveryNotes} onChange={e => setDeliveryNotes(e.target.value)} placeholder="Optional" />
-            </div>
-            <div className="items-section">
-              <div className="items-section-label">Items</div>
-              {items.map((item, idx) => (
-                <div key={idx} className="item-entry">
-                  <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
-                    <label>Product</label>
-                    <input value={item.productName} onChange={e => updateItem(idx, 'productName', e.target.value)} required />
+            {cart.length > 0 && (
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-zinc-500">Selected Items</label>
+                <div className="space-y-1">
+                  {cart.map(item => (
+                    <div key={item.key} className="flex items-center justify-between rounded bg-zinc-950 px-3 py-1.5">
+                      <span className="text-sm text-zinc-300">{item.productName}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-zinc-500">RON {(item.unitPrice * item.quantity).toFixed(2)}</span>
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => removeFromCart(item.productName)} className="text-zinc-600 hover:text-zinc-300">
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <span className="w-4 text-center text-xs text-zinc-300">{item.quantity}</span>
+                          <button onClick={() => addToCart(item.productName, item.unitPrice)} className="text-zinc-600 hover:text-zinc-300">
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex justify-end px-3 pt-1">
+                    <span className="text-sm font-semibold text-zinc-200">Total: RON {total.toFixed(2)}</span>
                   </div>
-                  <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                    <label>Qty</label>
-                    <input type="number" min={1} value={item.quantity} onChange={e => updateItem(idx, 'quantity', +e.target.value)} required />
-                  </div>
-                  <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                    <label>Price $</label>
-                    <input type="number" min={0} step={0.01} value={item.unitPrice} onChange={e => updateItem(idx, 'unitPrice', +e.target.value)} required />
-                  </div>
-                  <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                    <label>Weight kg</label>
-                    <input type="number" min={0} step={0.1} value={item.weight} onChange={e => updateItem(idx, 'weight', +e.target.value)} required />
-                  </div>
-                  {items.length > 1 && (
-                    <button type="button" className="btn btn-ghost btn-sm" onClick={() => removeItem(idx)} style={{ alignSelf: 'flex-end' }}>✕</button>
-                  )}
                 </div>
-              ))}
-              <div className="btn-group" style={{ marginTop: 8 }}>
-                <button type="button" className="btn btn-ghost btn-sm" onClick={addItem}>+ Add Item</button>
-                <button type="submit" className="btn btn-success btn-sm">Place Order</button>
               </div>
+            )}
+
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-500">Payment Method (Adapter)</label>
+              <div className="flex gap-2 mb-2">
+                {(['Cash', 'Card', 'DigitalWallet'] as PaymentGateway[]).map(m => (
+                  <button
+                    key={m}
+                    onClick={() => setPayment(m)}
+                    className={cn(
+                      'flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-colors',
+                      payment === m
+                        ? 'border-indigo-500 bg-indigo-500/15 text-indigo-300'
+                        : 'border-zinc-700 text-zinc-500 hover:border-zinc-600'
+                    )}
+                  >
+                    {m === 'Cash' && <Banknote className="h-3 w-3" />}
+                    {m === 'Card' && <CreditCard className="h-3 w-3" />}
+                    {m === 'DigitalWallet' && <Wallet className="h-3 w-3" />}
+                    {m === 'DigitalWallet' ? 'Wallet' : m}
+                  </button>
+                ))}
+              </div>
+              {payment === 'Card' && (
+                <Input
+                  placeholder="Card number…"
+                  value={cardNumber}
+                  onChange={e => setCardNumber(e.target.value)}
+                  className="bg-zinc-950 border-zinc-700 text-zinc-300 placeholder:text-zinc-600 h-8 text-xs"
+                />
+              )}
+              {payment === 'DigitalWallet' && (
+                <Input
+                  placeholder="Wallet ID…"
+                  value={walletId}
+                  onChange={e => setWalletId(e.target.value)}
+                  className="bg-zinc-950 border-zinc-700 text-zinc-300 placeholder:text-zinc-600 h-8 text-xs"
+                />
+              )}
             </div>
-          </form>
-        </div>
+
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-500">Delivery Notes (optional)</label>
+              <Input
+                placeholder="Leave at door…"
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+                className="bg-zinc-950 border-zinc-700 text-zinc-300 placeholder:text-zinc-600 h-8 text-xs"
+              />
+            </div>
+
+            <Button
+              className="w-full bg-indigo-600 hover:bg-indigo-500 text-white"
+              disabled={!customerId || cart.length === 0}
+              onClick={handleSubmit}
+            >
+              Place Order via Facade
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
-  );
+  )
 }
