@@ -6,6 +6,7 @@ import {
   Layers, GitBranch, Factory, Combine, Puzzle,
   TreePine, Component, Repeat, Maximize2, Sparkles,
   Calculator, Bell, Play, History, ListOrdered,
+  ListChecks, GitFork, Network, Receipt, Eye,
   type LucideIcon,
 } from 'lucide-react'
 import DashboardPage from './pages/DashboardPage'
@@ -21,6 +22,11 @@ import DeliveryEventsPage from './pages/DeliveryEventsPage'
 import DispatchConsolePage from './pages/DispatchConsolePage'
 import OrderDraftPage from './pages/OrderDraftPage'
 import CourierIteratorPage from './pages/CourierIteratorPage'
+import OrderValidationPage from './pages/OrderValidationPage'
+import DeliveryStatePage from './pages/DeliveryStatePage'
+import MediatorPage from './pages/MediatorPage'
+import ReceiptPage from './pages/ReceiptPage'
+import CourierVisitorPage from './pages/CourierVisitorPage'
 
 interface NavItem {
   to: string
@@ -46,6 +52,14 @@ const NAV_LAB6: NavItem[] = [
   { to: '/dispatch', label: 'Dispatch Console', icon: Play, pattern: 'Command' },
   { to: '/draft', label: 'Order Draft', icon: History, pattern: 'Memento' },
   { to: '/courier-walk', label: 'Courier Walk', icon: ListOrdered, pattern: 'Iterator' },
+]
+
+const NAV_LAB7: NavItem[] = [
+  { to: '/validation', label: 'Order Validation', icon: ListChecks, pattern: 'Chain' },
+  { to: '/state', label: 'Delivery State', icon: GitFork, pattern: 'State' },
+  { to: '/mediator', label: 'Dispatch Mediator', icon: Network, pattern: 'Mediator' },
+  { to: '/receipts', label: 'Receipts', icon: Receipt, pattern: 'Template' },
+  { to: '/courier-visitor', label: 'Courier Visitor', icon: Eye, pattern: 'Visitor' },
 ]
 
 const NAV_LAB4: NavItem[] = [
@@ -120,6 +134,11 @@ export default function App() {
     if (path === '/dispatch') return 'Dispatch Console'
     if (path === '/draft') return 'Order Draft'
     if (path === '/courier-walk') return 'Courier Walk'
+    if (path === '/validation') return 'Order Validation'
+    if (path === '/state') return 'Delivery State'
+    if (path === '/mediator') return 'Dispatch Mediator'
+    if (path === '/receipts') return 'Receipts'
+    if (path === '/courier-visitor') return 'Courier Visitor'
     return 'Delivery System'
   })()
 
@@ -143,6 +162,7 @@ export default function App() {
           <SidebarSection title="Lab 4 — Structural" items={NAV_LAB4} />
           <SidebarSection title="Lab 5 — Behavioral" items={NAV_LAB5} />
           <SidebarSection title="Lab 6 — Behavioral II" items={NAV_LAB6} />
+          <SidebarSection title="Lab 7 — Behavioral III" items={NAV_LAB7} />
         </nav>
       </aside>
 
@@ -171,6 +191,11 @@ export default function App() {
             <Route path="/dispatch" element={<DispatchConsolePage />} />
             <Route path="/draft" element={<OrderDraftPage />} />
             <Route path="/courier-walk" element={<CourierIteratorPage />} />
+            <Route path="/validation" element={<OrderValidationPage />} />
+            <Route path="/state" element={<DeliveryStatePage />} />
+            <Route path="/mediator" element={<MediatorPage />} />
+            <Route path="/receipts" element={<ReceiptPage />} />
+            <Route path="/courier-visitor" element={<CourierVisitorPage />} />
           </Routes>
         </main>
       </div>
