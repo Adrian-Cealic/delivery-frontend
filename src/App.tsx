@@ -5,6 +5,7 @@ import {
   PackagePlus, BarChart2, ShieldCheck,
   Layers, GitBranch, Factory, Combine, Puzzle,
   TreePine, Component, Repeat, Maximize2, Sparkles,
+  Calculator, Bell, Play, History, ListOrdered,
   type LucideIcon,
 } from 'lucide-react'
 import DashboardPage from './pages/DashboardPage'
@@ -15,6 +16,11 @@ import DeliveriesPage from './pages/DeliveriesPage'
 import PlaceOrderPage from './pages/PlaceOrderPage'
 import ReportsPage from './pages/ReportsPage'
 import ProtectedOrdersPage from './pages/ProtectedOrdersPage'
+import DeliveryQuotePage from './pages/DeliveryQuotePage'
+import DeliveryEventsPage from './pages/DeliveryEventsPage'
+import DispatchConsolePage from './pages/DispatchConsolePage'
+import OrderDraftPage from './pages/OrderDraftPage'
+import CourierIteratorPage from './pages/CourierIteratorPage'
 
 interface NavItem {
   to: string
@@ -32,6 +38,14 @@ const NAV_OPERATIONS: NavItem[] = [
   { to: '/place-order', label: 'Place Order', icon: PackagePlus },
   { to: '/reports', label: 'Reports', icon: BarChart2 },
   { to: '/protected-orders', label: 'Protected Orders', icon: ShieldCheck },
+]
+
+const NAV_LAB6: NavItem[] = [
+  { to: '/quote', label: 'Delivery Quote', icon: Calculator, pattern: 'Strategy' },
+  { to: '/events', label: 'Delivery Events', icon: Bell, pattern: 'Observer' },
+  { to: '/dispatch', label: 'Dispatch Console', icon: Play, pattern: 'Command' },
+  { to: '/draft', label: 'Order Draft', icon: History, pattern: 'Memento' },
+  { to: '/courier-walk', label: 'Courier Walk', icon: ListOrdered, pattern: 'Iterator' },
 ]
 
 const NAV_LAB4: NavItem[] = [
@@ -101,6 +115,11 @@ export default function App() {
     if (path === '/place-order') return 'Place Order'
     if (path === '/reports') return 'Reports'
     if (path === '/protected-orders') return 'Protected Orders'
+    if (path === '/quote') return 'Delivery Quote'
+    if (path === '/events') return 'Delivery Events'
+    if (path === '/dispatch') return 'Dispatch Console'
+    if (path === '/draft') return 'Order Draft'
+    if (path === '/courier-walk') return 'Courier Walk'
     return 'Delivery System'
   })()
 
@@ -123,6 +142,7 @@ export default function App() {
           <SidebarSection title="Operations" items={NAV_OPERATIONS} />
           <SidebarSection title="Lab 4 — Structural" items={NAV_LAB4} />
           <SidebarSection title="Lab 5 — Behavioral" items={NAV_LAB5} />
+          <SidebarSection title="Lab 6 — Behavioral II" items={NAV_LAB6} />
         </nav>
       </aside>
 
@@ -146,6 +166,11 @@ export default function App() {
             <Route path="/place-order" element={<PlaceOrderPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/protected-orders" element={<ProtectedOrdersPage />} />
+            <Route path="/quote" element={<DeliveryQuotePage />} />
+            <Route path="/events" element={<DeliveryEventsPage />} />
+            <Route path="/dispatch" element={<DispatchConsolePage />} />
+            <Route path="/draft" element={<OrderDraftPage />} />
+            <Route path="/courier-walk" element={<CourierIteratorPage />} />
           </Routes>
         </main>
       </div>
